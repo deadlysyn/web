@@ -76,10 +76,6 @@ header {
   }
 }
 
-/* header nav {
-  margin-right: -15px;
-} */
-
 header nav a {
   margin: 0 10px;
   letter-spacing: 3px;
@@ -108,6 +104,10 @@ header .left-aligned i {
   margin-top: 100px;
   /* duration timingfunc delay direction name */
   animation: 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.5s forwards slidefade;
+  /* try to work around ios/safari flicker :-( */
+  -webkit-transform-style: preserve-3d;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translate3d(0, 0, 0);
   font-size: 3vmin;
   font-weight: 300;
   letter-spacing: 0.3vmin;
