@@ -153,6 +153,23 @@ section:not(.top):nth-child(even) {
   margin: 20px 0;
 }
 
+.thanks p {
+  text-align: justify;
+  margin: 20px 0;
+}
+
+.thanks h4 {
+  margin: 20px 0;
+}
+
+.thanks .space-override {
+  margin: 0 0 20px;
+}
+
+.thanks a {
+  color: #fbc02d;
+}
+
 ul {
   list-style: none;
 }
