@@ -1,19 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-154144503-1"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "UA-154144503-1");
+    </script>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Automation, CI/CD, cloud, infrastructure, DevOps, infrastructure as code, full stack development, AWS, SRE, monitoring, agile, lean, XP, gadgets, food, travel, general geekery"
+      content="DevOps, SRE, automation, CI/CD, cloud, infrastructure as code, AWS, monitoring, agile, lean"
     />
     <title>DevOps Dreams</title>
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-    <link rel="stylesheet" href="css/96c459f3-style.min.css" />
-    <link
-      href="https://fonts.googleapis.com/css?family=Open+Sans:300i,400&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
+    <link href="assets/css/e4a157c4-style.min.css" rel="preload" as="style" />
+    <!-- <link href="assets/css/style.css" rel="preload" as="style" /> -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
@@ -37,18 +48,17 @@
       </div>
       <nav>
         <a href="about.html">About</a>
+        <a href="https://blog.devopsdreams.io">Blog</a>
         <a href="https://gitlab.com/deadlysyn/resume/blob/master/README.md"
           >Resume</a
         >
-        <a href="https://blog.devopsdreams.io">Blog</a>
-        <a href="thanks.html">Thanks</a>
       </nav>
     </header>
 
     <section class="top text-shadow">
       <div class="top-content">
         <p class="quote">
-          We are all apprentices in a craft where no one ever becomes a master.
+          We are all apprentices...
         </p>
         <p class="author">Ernest Hemingway</p>
         <p>
@@ -60,9 +70,9 @@
     <section>
       <img class="img-circle box-shadow" src="assets/f17347a9-about.jpg" />
       <p class="justified">
-        I am a humble, collaborative, ambitious, and continuously improving
+        I am a humble, collaborative, ambitious, and continuously learning
         DevOps engineer. I have been delivering large-scale distributed systems
-        and mission critical infrastructure services for over two decades. In
+        and mission-critical infrastructure services for over two decades. In
         that time I have developed a wide range of experience which includes
         being an individual contributor, technical lead, architect and hands-on
         manager.
@@ -70,19 +80,19 @@
       <p class="justified">
         I am passionate about DevOps culture and SRE principles as ways to rally
         people with diverse backgrounds around shared outcomes; increasing
-        productivity while simultaneously improving quality of life through
+        productivity while simultaneously improving quality of life through the
         tenacious pursuit of automation and elimination of toil.
       </p>
       <p class="justified">
         I am familiar with multiple cloud infrastructure providers, including
         Amazon Web Services and Google Cloud Platform, as well as multiple
-        orchestration frameworks including Kubernetes, Cloud Foundry and Consul. I am
-        well versed in Agile/XP practices, Lean Product Development, and
-        Infrastructure as Code.
+        container orchestration frameworks including Kubernetes and Cloud
+        Foundry. I am well versed in Agile practices, Lean Product Development,
+        and Infrastructure as Code.
       </p>
       <p class="justified">
         I am pragmatic in both my work style and technology choices, seeing the
-        world as a series of tradeoffs that must be carefully considered and
+        world as a series of trade-offs that must be carefully considered and
         occasionally reevaluated. I have worked fully remote for over a decade,
         am an excellent communicator, and highly effective at asynchronous
         collaboration. I value flexibility, autonomy and deep focus enabling a
@@ -111,14 +121,14 @@
           <i class="fas fa-cogs fa-3x text-shadow"></i>
           <h4>Development</h4>
           <p>
-            Building in Shell, Node.js, Go and SQL/NoSQL
+            Building in Shell, Node.js and Go
           </p>
         </li>
         <li>
           <i class="fas fa-laptop-code fa-3x text-shadow"></i>
           <h4>Infrastructure as Code</h4>
           <p>
-            GitOps combined with Ansible and Terraform
+            GitOps combined with Ansible, Terraform and Packer
           </p>
         </li>
         <li>
@@ -129,12 +139,14 @@
         <li>
           <i class="fas fa-train fa-3x text-shadow"></i>
           <h4>Continuous Integration</h4>
-          <p><em>Always be shipping</em>; Jenkins, Drone, CircleCI and Concourse</p>
+          <p>
+            Always be shipping; Jenkins, Drone, Concourse
+          </p>
         </li>
         <li>
           <i class="fas fa-binoculars fa-3x text-shadow"></i>
           <h4>Observability</h4>
-          <p>Sensu, Prometheus, Graphite, Grafana, ELK</p>
+          <p>Nagios, Sensu, Prometheus, Graphite, Grafana, ELK</p>
         </li>
         <li>
           <i class="fas fa-users fa-3x text-shadow"></i>

@@ -188,7 +188,7 @@ header {
   display: flex;
   justify-content: space-between;
   opacity: 0;
-  padding: calc(1em + 0.5vw) calc(3em + 0.5vw) 0;
+  padding: calc(1em + 0.5vw) calc(2em + 0.5vw) 0;
   position: absolute;
   width: 100%;
   z-index: 1;
