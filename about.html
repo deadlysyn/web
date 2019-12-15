@@ -1,20 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script
-      async
-      src="https://www.googletagmanager.com/gtag/js?id=UA-154144503-1"
-    ></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "UA-154144503-1");
-    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
@@ -23,18 +9,20 @@
     />
     <title>DevOps Dreams</title>
     <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32" />
-    <link href="assets/css/376a6c21-style.min.css" rel="stylesheet" />
-    <!-- <link href="assets/css/style.css" rel="stylesheet" /> -->
+    <link href="assets/css/0e54c596-style.min.css" rel="stylesheet" />
     <link
+      href="https://fonts.googleapis.com/css?family=Exo+2:400&display=swap"
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.min.css"
-      integrity="sha256-+N4/V/SbAFiW1MPBCXnfnP9QSN3+Keu+NlB+0ev/YKQ="
-      crossorigin="anonymous"
     />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/js/all.min.js"
+      integrity="sha256-qM7QTJSlvtPSxVRjVWNM2OfTAz/3k5ovHOKmKXuYMO4="
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
-    <header class="text-shadow">
-      <div class="left-aligned">
+    <div class="nav">
+      <div class="left">
         <a href="index.html"><i class="fas fa-home fa-lg"></i></a>
         <a href="mailto:info@devopsdreams.io"
           ><i class="fas fa-at fa-lg"></i
@@ -46,16 +34,16 @@
           ><i class="fab fa-git-alt fa-lg"></i
         ></a>
       </div>
-      <nav>
+      <div class="right">
         <a href="about.html">About</a>
         <a href="https://blog.devopsdreams.io">Blog</a>
         <a href="https://gitlab.com/deadlysyn/resume/blob/master/README.md"
           >Resume</a
         >
-      </nav>
-    </header>
+      </div>
+    </div>
 
-    <section class="top text-shadow">
+    <section class="top shadow">
       <div class="top-content">
         <p class="quote">
           We are all apprentices...
@@ -77,79 +65,57 @@
         being an individual contributor, technical lead, architect and hands-on
         manager.
       </p>
-      <p class="justified">
-        I am passionate about DevOps culture and SRE principles as ways to rally
-        people with diverse backgrounds around shared outcomes; increasing
-        productivity while simultaneously improving quality of life through the
-        tenacious pursuit of automation and elimination of toil.
-      </p>
-      <p class="justified">
-        I am familiar with multiple cloud infrastructure providers, including
-        Amazon Web Services and Google Cloud Platform, as well as multiple
-        container orchestration frameworks including Kubernetes and Cloud
-        Foundry. I am well versed in Agile practices, Lean Product Development,
-        and Infrastructure as Code.
-      </p>
-      <p class="justified">
-        I am pragmatic in both my work style and technology choices, seeing the
-        world as a series of trade-offs that must be carefully considered and
-        occasionally reevaluated. I have worked fully remote for over a decade,
-        am an excellent communicator, and highly effective at asynchronous
-        collaboration. I value flexibility, autonomy and deep focus enabling a
-        state of flow. I love Linux, Vim, Git and opportunities to solve new
-        puzzles in a variety of languages.
-      </p>
     </section>
 
     <section class="flex">
       <ul class="grid">
         <li>
-          <i class="fas fa-user-ninja fa-3x text-shadow"></i>
+          <i class="fas fa-user-ninja fa-3x"></i>
           <h4>Disciplines</h4>
           <p>
             Seasoned practitioner of DevOps and SRE
           </p>
         </li>
         <li>
-          <i class="fas fa-cloud-sun-rain fa-3x text-shadow"></i>
+          <i class="fas fa-cloud-sun-rain fa-3x"></i>
           <h4>Cloud Platforms</h4>
           <p>
             Real-world experience on every public IaaS
           </p>
         </li>
         <li>
-          <i class="fas fa-cogs fa-3x text-shadow"></i>
+          <i class="fas fa-cogs fa-3x"></i>
           <h4>Development</h4>
           <p>
             Building in Shell, Node.js and Go
           </p>
         </li>
         <li>
-          <i class="fas fa-laptop-code fa-3x text-shadow"></i>
+          <i class="fas fa-laptop-code fa-3x"></i>
           <h4>Infrastructure as Code</h4>
           <p>
-            GitOps combined with Ansible, Terraform and Packer
+            GitOps combined with Ansible and Terraform
           </p>
         </li>
         <li>
-          <i class="fab fa-codepen fa-3x text-shadow"></i>
+          <i class="fab fa-codepen fa-3x"></i>
           <h4>Container Orchestrators</h4>
-          <p>Skilled operator of Kubernetes and Cloud Foundry</p>
+          <p>Kubernetes and Cloud Foundry</p>
         </li>
         <li>
-          <i class="fas fa-train fa-3x text-shadow"></i>
+          <i class="fas fa-train fa-3x"></i>
           <h4>Continuous Integration</h4>
           <p>
-            Always be shipping; Jenkins, Drone, Concourse
+            Jenkins, Drone, CircleCI, Concourse
           </p>
         </li>
         <li>
-          <i class="fas fa-binoculars fa-3x text-shadow"></i>
+          <i class="fas fa-binoculars fa-3x"></i>
           <h4>Observability</h4>
-          <p>Nagios, Sensu, Prometheus, Graphite, Grafana, ELK</p>
+          <p>Nagios, Prometheus, Grafana, ELK</p>
         </li>
         <li>
-          <i class="fas fa-users fa-3x text-shadow"></i>
+          <i class="fas fa-users fa-3x"></i>
           <h4>Lean Product</h4>
           <p>User centered, focussed on value</p>
         </li>
