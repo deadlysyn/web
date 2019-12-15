@@ -136,7 +136,7 @@ section:not(.top):nth-child(even) {
 .img-circle {
   border-radius: 50%;
   display: block;
-  margin: calc(1em + 0.25vw) auto calc(0.25em + 0.25vw);
+  margin: calc(0.75em + 0.25vw) auto calc(0.25em + 0.25vw);
   width: 140px;
   height: auto;
 }
