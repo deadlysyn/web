@@ -17,9 +17,9 @@ html {
 
 body {
   font-family: "Exo 2", sans-serif;
-  font-size: calc(12px + 0.25vw);
+  font-size: calc(0.75em + 0.75vw);
   height: 100vh;
-  line-height: calc(4px + 2em);
+  line-height: calc(1em + 0.75vw);
 }
 
 a {
@@ -30,11 +30,11 @@ section {
   align-items: center;
   display: flex;
   flex-direction: column;
-  padding: calc(0.5em + 0.75vw);
+  padding: calc(1em + 0.75vw);
 }
 
 section p {
-  max-width: 700px;
+  max-width: 800px;
   text-align: center;
 }
 
@@ -55,16 +55,17 @@ section:not(.top):nth-child(even) {
   display: flex;
   justify-content: space-between;
   overflow: hidden;
-  padding: calc(4px + 0.25vw) calc(4px + 0.25vw);
+  padding: calc(0.25em + 0.25vw) calc(0.25em + 0.25vw);
   position: fixed;
-  top: 0px;
+  top: 0;
   width: 100%;
   z-index: 1;
 }
 
 .nav svg {
   color: #eceff1;
-  margin: 0 calc(8px + 0.25vw);
+  font-size: calc(1em + 0.25vw);
+  margin: calc(0.25em + 0.25vw);
 }
 
 .nav a {
@@ -78,10 +79,9 @@ section:not(.top):nth-child(even) {
 
 .nav .right a {
   color: #eceff1;
-  font-size: calc(12px + 1vw);
-  font-weight: 500;
-  letter-spacing: calc(1px + 0.25vw);
-  margin: 0 calc(8px + 0.25vw);
+  font-size: calc(1em + 0.25vw);
+  letter-spacing: calc(0.25em + 0.25vw);
+  margin: calc(0.25em + 0.25vw);
   text-decoration: none;
   text-transform: uppercase;
 }
@@ -98,7 +98,7 @@ section:not(.top):nth-child(even) {
 
 .nav .left i {
   color: #eceff1;
-  margin: 0 calc(8px + 0.25vw);
+  margin: 0 calc(0.25em + 0.25vw);
 }
 
 .top {
@@ -126,11 +126,13 @@ section:not(.top):nth-child(even) {
 .quote {
   font-style: oblique 20deg;
   font-size: calc(1em + 0.75vw);
+  max-width: 100%;
 }
 
 .author {
   font-size: calc(0.5em + 0.75vw);
-  padding: calc(4px + 1vw) 0;
+  max-width: 100%;
+  padding: calc(1.5em + 1vw) 0;
 }
 
 .img-circle {
@@ -196,9 +198,9 @@ ul {
     flex-direction: column;
   }
 
-  /* .nav .left {
-    margin-bottom: calc(1em + 0.5vw);
-  } */
+  .nav .left {
+    margin-bottom: calc(0.5em + 0.5vw);
+  }
 
   .flex .grid li {
     flex-basis: 100%;
