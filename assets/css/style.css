@@ -222,4 +222,8 @@ ul {
   .flex .grid li {
     flex-basis: 100%;
   }
+
+  .flex .grid li h3.about-heading {
+    margin: calc(0.5em + 0.5vw) 0 calc(1em + 0.5vw);
+  }
 }
