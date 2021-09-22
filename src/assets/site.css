@@ -7,3 +7,11 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.quote {
+  font-style: italic;
+}
+
+.attribution {
+  text-align: right;
+}
