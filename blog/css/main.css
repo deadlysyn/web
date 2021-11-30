@@ -2,38 +2,13 @@ html, body {
     height: 100%;
 }
 
-body {
-    display: flex;
-    text-align: center;
-    flex-direction: column;
-}
-
-main {
-    margin: auto;
-    padding: 25px;
-    flex: 1 0 auto;
-    max-width: 750px;
+code {
+    color: var(--accent) !important;
 }
 
 img {
     max-width: 100%;
 }
-
-/* Homepage */
-
-/* .intro { */
-/*     transform: translateY(22vh); */
-/* } */
-
-/* .intro > h1 { */
-/*     color: #212121; */
-/*     font-size: 12vh; */
-/* } */
-
-/* .intro > h4 { */
-/*     color: #757575; */
-/*     font-size: 3vmin; */
-/* } */
 
 /* Page content */
 
@@ -61,13 +36,8 @@ a.icon:hover {
 
 a:hover {
     color: var(--accent) !important;
+    text-decoration: underline dotted;
 }
-
-/* Copyright message */
-
-/* .copyright { */
-/*     margin: 15px 0; */
-/* } */
 
 /* Paginator */
 
@@ -78,20 +48,3 @@ a:hover {
 .pages-icon {
     padding: 0 15px;
 }
-
-/* List item for posts/projects */
-
-/* .item { */
-/*     padding: 10px 0; */
-/* } */
-
-/* .item-tag { */
-/*     background-color: var(--accent); */
-/* } */
-
-/* Navigation icons */
-
-/* .navbar-icon { */
-/*     font-size: 125%; */
-/*     display: inline-block !important; */
-/* } */
