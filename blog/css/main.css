@@ -34,9 +34,10 @@ a.icon:hover {
     text-decoration: none;
 }
 
-a:hover {
+div.content > a:hover {
+/* a:hover { */
     color: var(--accent) !important;
-    text-decoration: underline dotted;
+    /* text-decoration: underline dotted; */
 }
 
 /* Paginator */
