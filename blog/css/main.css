@@ -12,9 +12,9 @@ img {
 
 /* Page content */
 
-/* .content { */
-/*     padding-top: 20px; */
-/* } */
+.content {
+    padding-top: 20px;
+}
 
 /* Profile picture */
 
@@ -30,14 +30,13 @@ a:link, a:visited {
     color: var(--accent);
 }
 
-a.icon:hover {
-    text-decoration: none;
+a:hover {
+    /* color: var(--accent) !important; */
+    color: white;
 }
 
-div.content > a:hover {
-/* a:hover { */
-    color: var(--accent) !important;
-    /* text-decoration: underline dotted; */
+a.icon:hover {
+    text-decoration: none;
 }
 
 /* Paginator */
