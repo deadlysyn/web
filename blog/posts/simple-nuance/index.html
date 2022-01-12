@@ -1,0 +1,140 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta charset=utf-8>
+<meta name=viewport content="width=device-width,initial-scale=1">
+<meta name=description content="Automation, CI/CD, cloud, culture, DevOps, engineering, full stack development, infrastructure, Linux, observability, SRE, UNIX, OSS">
+<title>Simple Nuance</title>
+<style>html body{font-family:source code pro,monospace;background-color:#fff}:root{--accent:#fe8019}.highlight{--accent:#fbf1c7;padding-bottom:20px}</style>
+<link rel=stylesheet href=https://deadlysyn.com/blog/css/main.css>
+<link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source%20Code%20Pro">
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/base16/gruvbox-dark-medium.min.css>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css integrity="sha512-IgmDkwzs96t4SrChW29No3NXBIBv8baW490zk5aXvhCD8vuZM3yUSkbyTBcXohkySecyzIrUwiF/qV0cuPcL3Q==" crossorigin=anonymous referrerpolicy=no-referrer>
+<link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin=anonymous referrerpolicy=no-referrer>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js></script>
+<script>hljs.highlightAll()</script>
+<meta name=generator content="Hugo 0.91.2">
+</head>
+<body>
+<section class=section>
+<div class="container has-text-centered">
+<span class=icon>
+<a class="button is-medium is-white" href=https://deadlysyn.com>
+<i class="fa-solid fa-house"></i>
+</a>
+<a class="button is-medium is-white" href=https://deadlysyn.com/blog>
+<i class="fa-solid fa-book-open"></i>
+</a>
+<a class="button is-medium is-white" href=https://github.com/deadlysyn>
+<i class="fa-brands fa-github"></i>
+</a>
+<a class="button is-medium is-white" href=https://www.linkedin.com/in/deadlysyn>
+<i class="fa-brands fa-linkedin"></i>
+</a>
+</span>
+</div>
+</section>
+<section class=section>
+<div class="container is-max-desktop has-text-centered">
+<h3 class="title is-3">Simple Nuance</h3>
+<h5 class="title is-5"></h5>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/go>go</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/philosophy>philosophy</a></span>
+</div>
+</section>
+<section class=section>
+<div class="container is-max-desktop content">
+<p>Full Disclosure: I&rsquo;m not a real developer, I don&rsquo;t even play one on
+YouTube. I am most certainly
+<a href=https://youtu.be/SxdOUGdseq4>complecting simple and easy</a>.
+I had intended to keep the new blog focussed on projects, but apparently
+philosophical reflection is unavoidable&mldr; Apologies in advance.</p>
+<p>A person smarter than me said, &ldquo;Nothing is truly simple. There is
+always nuance.&rdquo; After tripping over this a couple times, it felt like an
+example worth sharing.</p>
+<p>You&rsquo;re a humble DevOps practitioner. You like Go because it&rsquo;s beautifully C-like
+without requiring real smarts. You&rsquo;ve read
+<a href=https://go.dev/doc/effective_go>Effective Go</a>
+a few times, understand block scope and rely heavily on
+<a href=https://go.dev/doc/effective_go#redeclaration>redeclaration</a>.</p>
+<p>One day you write this snippet (obfuscated to protect the guilty) which lints,
+compiles and passes all tests (clearly I could use better tests, I told you
+IANAD):</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>	<span style=color:#75715e>// in a caller far, far away...
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>ctx</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>()
+	<span style=color:#a6e22e>res</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>someFunc</span>(<span style=color:#a6e22e>ctx</span>)
+
+	<span style=color:#75715e>// later in someFunc...
+</span><span style=color:#75715e></span>	<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>things</span> []<span style=color:#a6e22e>foo</span>.<span style=color:#a6e22e>Thing</span>
+	<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>thingID</span>) &gt; <span style=color:#ae81ff>0</span> {
+		<span style=color:#a6e22e>thing</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThing</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>thingID</span>)
+		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+			<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
+		}
+		<span style=color:#a6e22e>things</span> = append(<span style=color:#a6e22e>things</span>, <span style=color:#a6e22e>thing</span>)
+	} <span style=color:#66d9ef>else</span> {
+		<span style=color:#a6e22e>things</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThings</span>(<span style=color:#a6e22e>ctx</span>)
+		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+			<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
+		}
+		<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>things</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> {
+			<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;no things!&#34;</span>)
+			<span style=color:#66d9ef>return</span>
+		}
+	}
+</code></pre></div><p>The code started only supporting collections. When adding support for single
+items, <code>things</code> was declared in advance and control flow added to assign
+as needed (real developers would keep the happy path aligned, but I&rsquo;m avoiding
+that holy war since it&rsquo;s orthogonal to this discussion).</p>
+<p>The single case works fine since <code>things</code> is assigned with <code>=</code>. While you
+understood <code>:=</code> to magically redeclare or reassign as needed, the <code>else</code> fails
+miserably because <code>things</code> is in fact not assigned as expected (it will create
+a new block-scoped <code>things</code>, with subsequent code operating on the originally
+declared <code>things</code>). You confirm this the only way a non-programmer
+knows how — lots of <code>fmt.Printf</code> statements checking the length and
+content of <code>things</code>. Yep, it&rsquo;s an empty list.</p>
+<p>In desperation your primordial DevOps brain rewrites&mldr; It looks sloppy, but
+works. You manage to sleep at night by convincing yourself this really is
+somewhat idiomatic (one nice thing about Go is not getting overly obsessed
+with DRY or trying to be clever at the cost of readability; &ldquo;just writing more
+code&rdquo; is often the idiomatic way):</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>	<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>things</span> []<span style=color:#a6e22e>foo</span>.<span style=color:#a6e22e>Thing</span>
+	<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>thingID</span>) &gt; <span style=color:#ae81ff>0</span> {
+		<span style=color:#a6e22e>thing</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThing</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>thingID</span>)
+		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+			<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
+		}
+		<span style=color:#a6e22e>things</span> = append(<span style=color:#a6e22e>things</span>, <span style=color:#a6e22e>thing</span>)
+	} <span style=color:#66d9ef>else</span> {
+		<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThings</span>(<span style=color:#a6e22e>ctx</span>)
+		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+			<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
+		}
+		<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>t</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> {
+			<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;no things!&#34;</span>)
+			<span style=color:#66d9ef>return</span>
+		}
+		<span style=color:#a6e22e>things</span> = <span style=color:#a6e22e>t</span>
+	}
+</code></pre></div><p>What gives? Re-reading <a href=https://go.dev/doc/effective_go#redeclaration>the docs</a> you see:</p>
+<blockquote>
+<p>In a := declaration a variable v may appear even if it has already been
+declared, provided:</p>
+<ul>
+<li>this declaration is in the same scope as the existing declaration of v (<strong>if v is already declared in an outer scope, the declaration will create a new variable</strong>),</li>
+<li>the corresponding value in the initialization is assignable to v, and</li>
+<li>there is at least one other variable that is created by the declaration.</li>
+</ul>
+</blockquote>
+<p>I&rsquo;ve read that many times and rely on it almost daily, but occasionally still
+find myself holding an incorrect mental model of scope. <code>things</code> is initially
+declared in some outer scope so feels right in the first version, but the
+declaration is scoped within the nearest enclosing block. Just as it should be.
+You sit back, take another sip of coffee, and think about the epiphany&mldr; Nope,
+no epiphany here. Just another &ldquo;DUH WTF&rdquo; moment.</p>
+<p>You know your developer friends will give you side-eye over the extra variable
+or not dropping the else entirely, but just as you start another rewrite the
+pager goes off. #devopslife</p>
+</div>
+</section>
+</body>
+</html>
