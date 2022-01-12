@@ -59,28 +59,28 @@ a few times, understand block scope and rely heavily on
 <p>One day you write this snippet (obfuscated to protect the guilty) which lints,
 compiles and passes all tests (clearly I could use better tests, I told you
 IANAD):</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>	<span style=color:#75715e>// in a caller far, far away...
-</span><span style=color:#75715e></span>	<span style=color:#a6e22e>ctx</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>()
-	<span style=color:#a6e22e>res</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>someFunc</span>(<span style=color:#a6e22e>ctx</span>)
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// in a caller far, far away...
+</span><span style=color:#75715e></span><span style=color:#a6e22e>ctx</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>()
+<span style=color:#a6e22e>res</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>someFunc</span>(<span style=color:#a6e22e>ctx</span>)
 
-	<span style=color:#75715e>// later in someFunc...
-</span><span style=color:#75715e></span>	<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>things</span> []<span style=color:#a6e22e>foo</span>.<span style=color:#a6e22e>Thing</span>
-	<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>thingID</span>) &gt; <span style=color:#ae81ff>0</span> {
-		<span style=color:#a6e22e>thing</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThing</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>thingID</span>)
-		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
-			<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
-		}
-		<span style=color:#a6e22e>things</span> = append(<span style=color:#a6e22e>things</span>, <span style=color:#a6e22e>thing</span>)
-	} <span style=color:#66d9ef>else</span> {
-		<span style=color:#a6e22e>things</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThings</span>(<span style=color:#a6e22e>ctx</span>)
-		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
-			<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
-		}
-		<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>things</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> {
-			<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;no things!&#34;</span>)
-			<span style=color:#66d9ef>return</span>
-		}
+<span style=color:#75715e>// later in someFunc...
+</span><span style=color:#75715e></span><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>things</span> []<span style=color:#a6e22e>foo</span>.<span style=color:#a6e22e>Thing</span>
+<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>thingID</span>) &gt; <span style=color:#ae81ff>0</span> {
+	<span style=color:#a6e22e>thing</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThing</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>thingID</span>)
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
 	}
+	<span style=color:#a6e22e>things</span> = append(<span style=color:#a6e22e>things</span>, <span style=color:#a6e22e>thing</span>)
+} <span style=color:#66d9ef>else</span> {
+	<span style=color:#a6e22e>things</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThings</span>(<span style=color:#a6e22e>ctx</span>)
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
+	}
+	<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>things</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> {
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;no things!&#34;</span>)
+		<span style=color:#66d9ef>return</span>
+	}
+}
 </code></pre></div><p>The code started only supporting collections. When adding support for single
 items, <code>things</code> was declared in advance and control flow added to assign
 as needed (real developers would keep the happy path aligned, but I&rsquo;m avoiding
@@ -97,24 +97,24 @@ works. You manage to sleep at night by convincing yourself this really is
 somewhat idiomatic (one nice thing about Go is not getting overly obsessed
 with DRY or trying to be clever at the cost of readability; &ldquo;just writing more
 code&rdquo; is often the idiomatic way):</p>
-<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go>	<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>things</span> []<span style=color:#a6e22e>foo</span>.<span style=color:#a6e22e>Thing</span>
-	<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>thingID</span>) &gt; <span style=color:#ae81ff>0</span> {
-		<span style=color:#a6e22e>thing</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThing</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>thingID</span>)
-		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
-			<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
-		}
-		<span style=color:#a6e22e>things</span> = append(<span style=color:#a6e22e>things</span>, <span style=color:#a6e22e>thing</span>)
-	} <span style=color:#66d9ef>else</span> {
-		<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThings</span>(<span style=color:#a6e22e>ctx</span>)
-		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
-			<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
-		}
-		<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>t</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> {
-			<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;no things!&#34;</span>)
-			<span style=color:#66d9ef>return</span>
-		}
-		<span style=color:#a6e22e>things</span> = <span style=color:#a6e22e>t</span>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#66d9ef>var</span> <span style=color:#a6e22e>things</span> []<span style=color:#a6e22e>foo</span>.<span style=color:#a6e22e>Thing</span>
+<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>thingID</span>) &gt; <span style=color:#ae81ff>0</span> {
+	<span style=color:#a6e22e>thing</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThing</span>(<span style=color:#a6e22e>ctx</span>, <span style=color:#a6e22e>thingID</span>)
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
 	}
+	<span style=color:#a6e22e>things</span> = append(<span style=color:#a6e22e>things</span>, <span style=color:#a6e22e>thing</span>)
+} <span style=color:#66d9ef>else</span> {
+	<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>getThings</span>(<span style=color:#a6e22e>ctx</span>)
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#a6e22e>logger</span>.<span style=color:#a6e22e>Fatal</span>(<span style=color:#a6e22e>err</span>)
+	}
+	<span style=color:#66d9ef>if</span> len(<span style=color:#a6e22e>t</span>) <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> {
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;no things!&#34;</span>)
+		<span style=color:#66d9ef>return</span>
+	}
+	<span style=color:#a6e22e>things</span> = <span style=color:#a6e22e>t</span>
+}
 </code></pre></div><p>What gives? Re-reading <a href=https://go.dev/doc/effective_go#redeclaration>the docs</a> you see:</p>
 <blockquote>
 <p>In a := declaration a variable v may appear even if it has already been
