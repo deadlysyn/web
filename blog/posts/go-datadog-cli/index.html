@@ -3,7 +3,7 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="Automation, CI/CD, cloud, culture, DevOps, engineering, full stack development, infrastructure, Linux, observability, SRE, UNIX, OSS">
-<title>datadog</title>
+<title>Go Datadog CLI</title>
 <style>html body{font-family:source code pro,monospace;background-color:#fff}:root{--accent:#fe8019}.highlight{--accent:#fbf1c7;padding-bottom:20px}</style>
 <link rel=stylesheet href=https://deadlysyn.com/blog/css/main.css>
 <link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source%20Code%20Pro">
@@ -13,8 +13,6 @@
 <script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js></script>
 <script>hljs.highlightAll()</script>
 <meta name=generator content="Hugo 0.92.0">
-<link href=/blog/tags/datadog/index.xml rel=alternate type=application/rss+xml title="Hello World">
-<link href=/blog/tags/datadog/index.xml rel=feed type=application/rss+xml title="Hello World">
 </head>
 <body>
 <section class=section>
@@ -37,15 +35,29 @@
 </section>
 <section class=section>
 <div class="container is-max-desktop has-text-centered">
-<h3 class="title is-3">datadog</h3>
-<div class="container is-max-desktop has-text-centered content">
-<a class=is-size-4 href=/blog/posts/datadog-client/>Go Datadog Client</a></br>
-November 29, 2021<br>
-<span class=tag><a href=https://deadlysyn.com/blog/tags/datadog>datadog</a></span>
+<h3 class="title is-3">Go Datadog CLI</h3>
+<h5 class="title is-5"></h5>
 <span class=tag><a href=https://deadlysyn.com/blog/tags/devops>devops</a></span>
 <span class=tag><a href=https://deadlysyn.com/blog/tags/go>go</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/monitoring>monitoring</a></span>
 <span class=tag><a href=https://deadlysyn.com/blog/tags/oss>oss</a></span>
 </div>
+</section>
+<section class=section>
+<div class="container is-max-desktop content">
+<p>I found myself wrapping ChatOps around a CI/CD pipeline to manage scheduled
+downtime in DataDog (avoiding SLO impact for planned work). For astute readers
+wondering why this wasn&rsquo;t a direct API call; I tend to (ab)use CI as a generic
+task runner (has an API, secret store, etc).</p>
+<p>I wanted to identify resources using labels (<code>team:foo</code>, <code>service:bar</code>). While
+this is a common use case and things have hopefully improved, CLIs available
+at the time provided numerous ways to manage downtime but lacked tag support.</p>
+<p>The <a href=https://github.com/DataDog/datadog-api-client-go>DataDog SDK</a> came to
+the rescue. I resisted the urge to go down the rabbit hole of a full-fledged
+client (maybe some day), but implemented enough to support my use case and
+provide a framework for a Go DataDog CLI.</p>
+<p><a href=https://github.com/deadlysyn/datadog-cli>Browse the repo</a>, and feel
+free to open issues or submit PRs.</p>
 </div>
 </section>
 </body>

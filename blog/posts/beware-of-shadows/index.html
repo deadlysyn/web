@@ -3,7 +3,7 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="Automation, CI/CD, cloud, culture, DevOps, engineering, full stack development, infrastructure, Linux, observability, SRE, UNIX, OSS">
-<title>Simple Nuance</title>
+<title>Beware of Shadows</title>
 <style>html body{font-family:source code pro,monospace;background-color:#fff}:root{--accent:#fe8019}.highlight{--accent:#fbf1c7;padding-bottom:20px}</style>
 <link rel=stylesheet href=https://deadlysyn.com/blog/css/main.css>
 <link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source%20Code%20Pro">
@@ -35,30 +35,25 @@
 </section>
 <section class=section>
 <div class="container is-max-desktop has-text-centered">
-<h3 class="title is-3">Simple Nuance</h3>
+<h3 class="title is-3">Beware of Shadows</h3>
 <h5 class="title is-5"></h5>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/development>development</a></span>
 <span class=tag><a href=https://deadlysyn.com/blog/tags/go>go</a></span>
 <span class=tag><a href=https://deadlysyn.com/blog/tags/philosophy>philosophy</a></span>
 </div>
 </section>
 <section class=section>
 <div class="container is-max-desktop content">
-<p>Full Disclosure: I&rsquo;m not a real developer, I don&rsquo;t even play one on
-YouTube. I am most certainly
-<a href=https://youtu.be/SxdOUGdseq4>complecting simple and easy</a>.
-I had intended to keep the new blog focussed on projects, but apparently
-philosophical reflection is unavoidable&mldr; Apologies in advance.</p>
-<p>A person smarter than me said, &ldquo;Nothing is truly simple. There is
-always nuance.&rdquo; After tripping over this a couple times, it felt like an
-example worth sharing.</p>
-<p>You&rsquo;re a humble DevOps practitioner. You like Go because it&rsquo;s beautifully C-like
-without requiring real smarts. You&rsquo;ve read
+<p>You&rsquo;re a humble DevOps practitioner. You like Go because <del>it&rsquo;s beautifully
+C-like without requiring real smarts</del> most modern DevOps tools are written in
+it. You&rsquo;ve read
 <a href=https://go.dev/doc/effective_go>Effective Go</a>
-a few times, understand block scope and rely heavily on
+a few times, understand
+<a href=https://go.dev/ref/spec#Blocks>block scope</a>
+and rely heavily on
 <a href=https://go.dev/doc/effective_go#redeclaration>redeclaration</a>.</p>
 <p>One day you write this snippet (obfuscated to protect the guilty) which lints,
-compiles and passes all tests (clearly I could use better tests, I told you
-IANAD):</p>
+compiles and passes all tests (clearly I could use better tests):</p>
 <div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=color:#75715e>// in a caller far, far away...
 </span><span style=color:#75715e></span><span style=color:#a6e22e>ctx</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>context</span>.<span style=color:#a6e22e>Background</span>()
 <span style=color:#a6e22e>res</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>someFunc</span>(<span style=color:#a6e22e>ctx</span>)
@@ -83,8 +78,8 @@ IANAD):</p>
 }
 </code></pre></div><p>The code started only supporting collections. When adding support for single
 items, <code>things</code> was declared in advance and control flow added to assign
-as needed (real developers would keep the happy path aligned, but I&rsquo;m avoiding
-that holy war since it&rsquo;s orthogonal to this discussion).</p>
+as needed (real developers would keep the happy path aligned, a noble goal
+that&rsquo;s orthogonal to this discussion).</p>
 <p>The single case works fine since <code>things</code> is assigned with <code>=</code>. While you
 understood <code>:=</code> to magically redeclare or reassign as needed, the <code>else</code> fails
 miserably because <code>things</code> is in fact not assigned as expected (it will create
@@ -127,12 +122,29 @@ declared, provided:</p>
 </blockquote>
 <p>I&rsquo;ve read that many times and rely on it almost daily, but occasionally still
 find myself holding an incorrect mental model. My brain decides the first
-version feels right, even though the declaration is scoped to the nearest
-block. Just as it should be.</p>
+version feels right (function scope where the initial declaration occurs rules
+redeclaration), even though the declaration is scoped to the nearest block (the
+<code>if</code>).</p>
+<p>This is so common in Go it has an official name, &ldquo;shadowing&rdquo;. Give it a search
+and the confusion is enlightening. Jon Bodner&rsquo;s
+<a href=https://www.oreilly.com/library/view/learning-go/9781492077206>Learning Go</a>
+even calls it out as a specific case to be aware of with a suggested fix:</p>
+<blockquote>
+<p><em>Because <code>:=</code> allows you to assign to both new and existing variables, it
+sometimes creates new variables when you think you are reusing existing ones.
+In those situations, explicitly declare all of your new variables with <code>var</code>
+to make it clear which variables are new, and then use the assignment (<code>=</code>)
+operator to assign values to both new and old variables.</em></p>
+<p>— <em>Learning Go</em>, Chapter 2, &ldquo;var Versus :=&rdquo;</p>
+</blockquote>
+<p>Shadowing can happen in many contexts including &ldquo;simple&rdquo; cases with a single
+variable, multi-variable declarations and assignments (more common in my
+experience), and package imports.</p>
 <p>You sit back, take another sip of coffee, and think about the epiphany&mldr;
-Nope, no epiphany here. Just another &ldquo;DUH WTF&rdquo; moment. You know your developer
-friends will give you side-eye over the extra variable or not dropping the else
-entirely, but just as you start another rewrite the pager goes off. #devopslife</p>
+Nope, no epiphany here. Just another &ldquo;WTF&rdquo; moment where useful magic bites you
+in the ass. You know your developer friends will give you side-eye over the
+extra variable or not dropping the else entirely, but just as you start another
+rewrite the pager goes off. #devopslife</p>
 </div>
 </section>
 </body>
