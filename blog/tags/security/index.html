@@ -3,7 +3,7 @@
 <meta charset=utf-8>
 <meta name=viewport content="width=device-width,initial-scale=1">
 <meta name=description content="Automation, CI/CD, cloud, culture, DevOps, engineering, full stack development, infrastructure, Linux, observability, SRE, UNIX, OSS">
-<title>Keycloak IaC</title>
+<title>security</title>
 <style>html body{font-family:source code pro,monospace;background-color:#fff}:root{--accent:#fe8019}.highlight{--accent:#fbf1c7;padding-bottom:20px}</style>
 <link rel=stylesheet href=https://deadlysyn.com/blog/css/main.css>
 <link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source%20Code%20Pro">
@@ -13,6 +13,8 @@
 <script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js></script>
 <script>hljs.highlightAll()</script>
 <meta name=generator content="Hugo 0.92.2">
+<link href=/blog/tags/security/index.xml rel=alternate type=application/rss+xml title="Hello World">
+<link href=/blog/tags/security/index.xml rel=feed type=application/rss+xml title="Hello World">
 </head>
 <body>
 <section class=section>
@@ -35,37 +37,14 @@
 </section>
 <section class=section>
 <div class="container is-max-desktop has-text-centered">
-<h3 class="title is-3">Keycloak IaC</h3>
-<h5 class="title is-5"></h5>
-<span class=tag><a href=https://deadlysyn.com/blog/tags/iac>iac</a></span>
-<span class=tag><a href=https://deadlysyn.com/blog/tags/oss>oss</a></span>
-<span class=tag><a href=https://deadlysyn.com/blog/tags/terraform>terraform</a></span>
+<h3 class="title is-3">security</h3>
+<div class="container is-max-desktop has-text-centered content">
+<a class=is-size-4 href=/blog/posts/safely-expose-credentials/>Safely Expose Credentials</a></br>
+March 10, 2022<br>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/aws>aws</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/devops>devops</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/security>security</a></span>
 </div>
-</section>
-<section class=section>
-<div class="container is-max-desktop content">
-<p><a href=https://www.keycloak.org>Keycloak</a>
-is a flexible, open source, identify access and management solution
-(Red Hat SSO being the commercial variant). While there is a growing community,
-much information is focused on service integration.</p>
-<p>After Terraforming supporting infrastructure, I wanted to share a &ldquo;batteries
-included&rdquo; project to quickly get anyone adopting Keycloak up and running. If
-you already use Keycloak, it may provide inspiration. If you find it lacking,
-please help extend it for the greater good.</p>
-<p>The project takes an opinionated approach to simplify bootstrapping new
-environments. Larger architectural choices and sensible defaults have been
-encapsulated. Many of these can be overridden by power users.</p>
-<p>Out of the box you get template-based environments leveraging AWS services
-as building blocks (including a number of Fargate-specific tweaks). Required
-network infrastructure is fully-managed, but can also be replaced with your
-own. Remote state is automatically configured, keeping critical details off
-local disk (encrypted) and ensuring environments can be managed by teams.
-Single-command build/deploy and easy scaling reduce cognitive load.</p>
-<p><a href=https://github.com/deadlysyn/terraform-keycloak-aws>Browse the project repo</a>.
-Open issues or submit PRs if you spot bugs or have feature requests. With
-community effort, we can make it easier for everyone to deploy Keycloak
-consistently and securely.</p>
-<p><em>NOTE: Republished as part of migrating from Ghost to Hugo.</em></p>
 </div>
 </section>
 </body>
