@@ -158,32 +158,32 @@ managing RDS passwords (or similar things better integrated with Secrets
 Manager), and don&rsquo;t require rotation&mldr; at least not automated (we could always
 rotate our own secrets manually if needed). We could use a combination of
 environment (for non-sensitive things) and secrets (providing ARNs to retrieve
-from Parameter Store) to get the job done:</p><pre tabindex=0><code class=language-josn data-lang=josn>{
-  &#34;containerDefinitions&#34;: [
-    &#34;environment&#34;: [
-      {
-        &#34;name&#34;: &#34;LISTEN_HOST&#34;,
-        &#34;value&#34;: &#34;0.0.0.0&#34;
-      },
-      {
-        &#34;name&#34;: &#34;LISTEN_PORT&#34;,
-        &#34;value&#34;: &#34;8080&#34;
-      },
-      {
-        &#34;name&#34;: &#34;NODE_ENV&#34;,
-        &#34;value&#34;: &#34;production&#34;
-      }
-    ],
-    &#34;secrets&#34;: [
-      {
-        {
-          &#34;name&#34;: &#34;SESSION_SECRET&#34;,
-          &#34;valueFrom&#34;: &#34;arn:aws:ssm:us-east-2:012345678901:parameter/hello-world/SESSION_SECRET&#34;
-        }
-    ]
-  ]
-}
-</code></pre><h2 id=closing-thoughts>Closing Thoughts</h2><p>We&rsquo;ve found lots of good references to help make sense of the JSON blobs that
+from Parameter Store) to get the job done:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-json data-lang=json><span style=display:flex><span>{
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;containerDefinitions&#34;</span>: [
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;environment&#34;</span><span style=color:#960050;background-color:#1e0010>:</span> [
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#f92672>&#34;name&#34;</span>: <span style=color:#e6db74>&#34;LISTEN_HOST&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#f92672>&#34;value&#34;</span>: <span style=color:#e6db74>&#34;0.0.0.0&#34;</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#f92672>&#34;name&#34;</span>: <span style=color:#e6db74>&#34;LISTEN_PORT&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#f92672>&#34;value&#34;</span>: <span style=color:#e6db74>&#34;8080&#34;</span>
+</span></span><span style=display:flex><span>      },
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#f92672>&#34;name&#34;</span>: <span style=color:#e6db74>&#34;NODE_ENV&#34;</span>,
+</span></span><span style=display:flex><span>        <span style=color:#f92672>&#34;value&#34;</span>: <span style=color:#e6db74>&#34;production&#34;</span>
+</span></span><span style=display:flex><span>      }
+</span></span><span style=display:flex><span>    ],
+</span></span><span style=display:flex><span>    <span style=color:#e6db74>&#34;secrets&#34;</span><span style=color:#960050;background-color:#1e0010>:</span> [
+</span></span><span style=display:flex><span>      {
+</span></span><span style=display:flex><span>        <span style=color:#960050;background-color:#1e0010>{</span>
+</span></span><span style=display:flex><span>          <span style=color:#f92672>&#34;name&#34;</span>: <span style=color:#e6db74>&#34;SESSION_SECRET&#34;</span>,
+</span></span><span style=display:flex><span>          <span style=color:#f92672>&#34;valueFrom&#34;</span>: <span style=color:#e6db74>&#34;arn:aws:ssm:us-east-2:012345678901:parameter/hello-world/SESSION_SECRET&#34;</span>
+</span></span><span style=display:flex><span>        }
+</span></span><span style=display:flex><span>    ]
+</span></span><span style=display:flex><span>  ]
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><h2 id=closing-thoughts>Closing Thoughts</h2><p>We&rsquo;ve found lots of good references to help make sense of the JSON blobs that
 are AWS ECS Task Definitions, and learned some nuance about a few of the more
 interesting parameters&mldr; Still, real-world examples are nice. Be sure to refer
 to the sample included in our <a href=https://gitlab.com/deadlysyn/node-aws-ecs/-/blob/master/ecs/task-definition.json>project repo</a>
