@@ -3,7 +3,8 @@
 <a class="button is-medium is-white" href=https://deadlysyn.com/blog><i class="fa-solid fa-book-open"></i></a>
 <a class="button is-medium is-white" href=https://github.com/deadlysyn><i class="fa-brands fa-github"></i></a>
 <a class="button is-medium is-white" href=https://www.linkedin.com/in/deadlysyn><i class="fa-brands fa-linkedin"></i></a></span></div></section><section class=section><div class="container is-max-desktop has-text-centered"><h3 class="title is-3">Contain Yourself</h3><h5 class="title is-5"></h5><span class=tag><a href=https://deadlysyn.com/blog/tags/aws>aws</a></span>
-<span class=tag><a href=https://deadlysyn.com/blog/tags/devops>devops</a></span></div></section><section class=section><div class="container is-max-desktop content"><p><a href=https://github.com/deadlysyn/node-aws-ecs>Clone the project repo to follow along&mldr;</a></p><p>In <a href=/blog/posts/thinking-inside-the-box>part one of this series</a> we walked
+<span class=tag><a href=https://deadlysyn.com/blog/tags/containers>containers</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/devops>devops"</a></span></div></section><section class=section><div class="container is-max-desktop content"><p><a href=https://github.com/deadlysyn/node-aws-ecs>Clone the project repo to follow along&mldr;</a></p><p>In <a href=/blog/posts/thinking-inside-the-box>part one of this series</a> we walked
 through using Docker to containerize a simple <a href=https://nodejs.org>Node.js</a> app
 and verified our shiny new container worked as expected. Unfortunately,
 containers aren&rsquo;t much use if we can&rsquo;t get them deployed to start delighting
@@ -147,7 +148,7 @@ you can:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-
 </span></span><span style=display:flex><span>Digest: sha256:bfa585daf12805676876acd680b82f7c090f82c468b0ddb3b58d368d6d52277b
 </span></span><span style=display:flex><span>Status: Image is up to date for 012345678901.dkr.ecr.us-east-2.amazonaws.com/hello-world:latest
 </span></span><span style=display:flex><span>012345678901.dkr.ecr.us-east-2.amazonaws.com/hello-world:latest
-</span></span></code></pre></div><p>Pulling our app from ECRWe&rsquo;ve officially published our sample app to ECR, so it
+</span></span></code></pre></div><p>We&rsquo;ve officially published our sample app to ECR, so it
 can be pulled by ECS tasks to provide a real-world service! To clean things up
 and avoid any financial impact, we can easily remove our image and repository:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ ./scripts/ecr-delete-image hello-world
 </span></span><span style=display:flex><span>{

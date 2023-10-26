@@ -26,7 +26,7 @@ organized, then create the requisite files:</p><div class=highlight><pre tabinde
 </span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;name&#34;</span>: <span style=color:#e6db74>&#34;node-aws-ecs&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;version&#34;</span>: <span style=color:#e6db74>&#34;0.0.1&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;description&#34;</span>: <span style=color:#e6db74>&#34;Node.js on AWS ECS&#34;</span>,
-</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;author&#34;</span>: <span style=color:#e6db74>&#34;Mike Hoskins &lt;mrh@devopsdreams.io&gt;&#34;</span>,
+</span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;author&#34;</span>: <span style=color:#e6db74>&#34;Mike Hoskins &lt;me@deadlysyn.com&gt;&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;license&#34;</span>: <span style=color:#e6db74>&#34;MIT&#34;</span>,
 </span></span><span style=display:flex><span>  <span style=color:#f92672>&#34;repository&#34;</span>: {
 </span></span><span style=display:flex><span>    <span style=color:#f92672>&#34;type&#34;</span>: <span style=color:#e6db74>&#34;git&#34;</span>,
@@ -60,7 +60,7 @@ handle web requests with a static response:</p><div class=highlight><pre tabinde
 </span></span><span style=display:flex><span><span style=color:#a6e22e>console</span>.<span style=color:#a6e22e>log</span>(<span style=color:#e6db74>`Running on http://</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>HOST</span><span style=color:#e6db74>}</span><span style=color:#e6db74>:</span><span style=color:#e6db74>${</span><span style=color:#a6e22e>PORT</span><span style=color:#e6db74>}</span><span style=color:#e6db74>`</span>);
 </span></span></code></pre></div><p>To test, just run <code>npm start</code> and then make sure you see <code>Hello World</code> when sending
 HTTP requests to <code>localhost:8080</code> (I&rsquo;m using <a href=https://httpie.org>HTTPie</a>, but feel
-free to use your favorite request generator such as curl or Postman):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>➜ npm start
+free to use your favorite request generator such as curl or Postman):</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ npm start
 </span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
 </span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>&gt; node-aws-ecs@0.0.1 start /Users/mhoskins/src/node-aws-ecs
 </span></span><span style=display:flex><span>&gt; node server.js
@@ -69,7 +69,7 @@ free to use your favorite request generator such as curl or Postman):</p><div cl
 </span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
 </span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span># ...
 </span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
-</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>➜ http -v :8080
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>❯ http -v :8080
 </span></span><span style=display:flex><span>GET / HTTP/1.1
 </span></span><span style=display:flex><span>Accept: */*
 </span></span><span style=display:flex><span>Accept-Encoding: gzip, deflate
@@ -103,7 +103,7 @@ inside the container to serve our content).</p><p>Often, you will see <code>ENTR
 the differences between <a href=https://docs.docker.com/engine/reference/builder/#cmd>CMD</a>
 and <a href=https://docs.docker.com/engine/reference/builder/#entrypoint>ENTRYPOINT</a>
 since it&rsquo;s not relevant here, but be aware of how they interact.</p><p>Let&rsquo;s start with a working example, then explain a bit more:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Dockerfile data-lang=Dockerfile><span style=display:flex><span><span style=color:#66d9ef>FROM</span><span style=color:#e6db74> node:lts-alpine</span><span style=color:#960050;background-color:#1e0010>
-</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>LABEL</span> maintainer<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;mrh@devopsdreams.io&#34;</span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>LABEL</span> maintainer<span style=color:#f92672>=</span><span style=color:#e6db74>&#34;me@deadlysyn.com&#34;</span><span style=color:#960050;background-color:#1e0010>
 </span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
 </span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span><span style=color:#75715e># Dependencies</span><span style=color:#960050;background-color:#1e0010>
 </span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span><span style=color:#66d9ef>RUN</span> apk update <span style=color:#f92672>&amp;&amp;</span> <span style=color:#ae81ff>\
