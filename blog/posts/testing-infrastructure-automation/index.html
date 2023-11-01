@@ -1,0 +1,273 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Automation, CI/CD, cloud, culture, DevOps, engineering, full stack development, infrastructure, Linux, observability, SRE, UNIX, OSS"><title>Testing Infrastructure Code</title><style>html body{font-family:source code pro,monospace;background-color:#fff}:root{--accent:#fe8019}.highlight{--accent:#fbf1c7;padding-bottom:20px}</style><link rel=stylesheet href=https://deadlysyn.com/blog/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source%20Code%20Pro"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/base16/gruvbox-dark-medium.min.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css integrity="sha512-IgmDkwzs96t4SrChW29No3NXBIBv8baW490zk5aXvhCD8vuZM3yUSkbyTBcXohkySecyzIrUwiF/qV0cuPcL3Q==" crossorigin=anonymous referrerpolicy=no-referrer><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin=anonymous referrerpolicy=no-referrer><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js></script>
+<script>hljs.highlightAll()</script><meta name=generator content="Hugo 0.119.0"></head><body><section class=section><div class="container has-text-centered"><span class=icon><a class="button is-medium is-white" href=https://deadlysyn.com><i class="fa-solid fa-house"></i></a>
+<a class="button is-medium is-white" href=https://deadlysyn.com/blog><i class="fa-solid fa-book-open"></i></a>
+<a class="button is-medium is-white" href=https://github.com/deadlysyn><i class="fa-brands fa-github"></i></a>
+<a class="button is-medium is-white" href=https://www.linkedin.com/in/deadlysyn><i class="fa-brands fa-linkedin"></i></a></span></div></section><section class=section><div class="container is-max-desktop has-text-centered"><h3 class="title is-3">Testing Infrastructure Code</h3><h5 class="title is-5"></h5><span class=tag><a href=https://deadlysyn.com/blog/tags/aws>aws</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/go>go</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/iac>iac</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/terraform>terraform</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/terratest>terratest</a></span></div></section><section class=section><div class="container is-max-desktop content"><p><a href=https://github.com/deadlysyn/terratest-experiment>Clone and follow along in the project repository&mldr;</a></p><p>If you&rsquo;re among the increasing majority who are using <a href=https://www.terraform.io>Terraform</a>
+in some fashion, you have probably heard of <a href=https://terratest.gruntwork.io>Terratest</a>.
+In the project&rsquo;s own words, Terratest is a Go
+library that provides patterns and helper functions for testing infrastructure.
+While useful, Terratest may seem daunting since it requires writing Go. If
+you&rsquo;ve wanted to get started with Terratest but haven&rsquo;t had time to dig in, read
+on for a quick and painless intro!</p><p>First, why do we need Terratest at all? It could be viewed as another project
+dependency or complexity adding cognitive load. It&rsquo;s good to be mindful of such
+things. The key is accepting complexity when the added value (or reduced risk)
+is deemed a worthy trade-off. In the case of Terratest, particularly in larger
+projects or shared modules, we trade some additional complexity for the peace of
+mind test coverage provides – specifically, that key features continue to work
+as projects evolve.</p><h2 id=getting-started>Getting Started</h2><p>Terratest leverages Go&rsquo;s native <a href=https://golang.org/pkg/testing>testing</a>
+library. The first thing that means is you need Go installed and properly
+configured. Luckily, installing Go has gotten easier over the years. Instead of
+downloading releases and following manual instructions (<a href=https://golang.org/doc/install/source>you can still do that if you prefer</a>),
+it&rsquo;s likely just a <code>brew install go</code> away. Aside from the installation,
+you&rsquo;ll want to create a workspace (traditionally <code>${HOME}/go</code>) and
+<a href=https://golang.org/doc/install/source#environment>add some new environment variables to your shell profile</a>.
+Here&rsquo;s mine:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ grep GO ~/.zshrc         
+</span></span><span style=display:flex><span>export GOPATH=&#34;${HOME}/go&#34;
+</span></span><span style=display:flex><span>export GOROOT=&#34;$(brew --prefix golang)/libexec&#34;
+</span></span><span style=display:flex><span>export PATH=&#34;${PATH}:${GOPATH}/bin:${GOROOT}/bin&#34;
+</span></span></code></pre></div><p>Go modules are used to install dependencies, such as Terratest itself and the
+<a href=https://github.com/stretchr/testify>testify assertion library</a>. I&rsquo;m
+going to avoid rabbit holes, you&rsquo;ll see enough examples below to
+get started! For modules in particular, we&rsquo;ll automate the few things needed
+for Terratest, and <a href=https://blog.golang.org/using-go-modules>everything else has been said before</a>.</p><p>For this project we&rsquo;ll use the organization scheme
+below – feel free to experiment and pick what works best for you. There really
+is no right way, but there are a few common patterns you&rsquo;ll see when browsing
+community modules. Aside from the Terraform practice of breaking out discrete
+functionality as modules, tests are often placed in <code>${PROJECT_ROOT}/test/src</code>
+directory. Tests run against specific configurations in <code>${PROJECT_ROOT}/examples</code>.</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>.
+</span></span><span style=display:flex><span>├── CONTRIBUTING.md
+</span></span><span style=display:flex><span>├── LICENSE
+</span></span><span style=display:flex><span>├── README.md
+</span></span><span style=display:flex><span>├── build
+</span></span><span style=display:flex><span>│   ├── Dockerfile
+</span></span><span style=display:flex><span>│   └── src
+</span></span><span style=display:flex><span>├── environments
+</span></span><span style=display:flex><span>│   └── dev
+</span></span><span style=display:flex><span>│       └── Makefile
+</span></span><span style=display:flex><span>├── examples
+</span></span><span style=display:flex><span>├── modules
+</span></span><span style=display:flex><span>│   └── network
+</span></span><span style=display:flex><span>│   └── web
+</span></span><span style=display:flex><span>└── test
+</span></span><span style=display:flex><span>    ├── Makefile
+</span></span><span style=display:flex><span>    └── src
+</span></span><span style=display:flex><span>        └── example_complete_test.go
+</span></span><span style=display:flex><span>        └── etc.
+</span></span></code></pre></div><p>We want to focus on
+Terratest vs Terraform, so our contrived example takes a number of shortcuts
+such as using the default VPC in your AWS account and Amazon&rsquo;s DNS. To keep it
+slightly more realistic, we&rsquo;ll break out a couple modules. You might use a
+community module to handle the network bits, an internal module from your
+network team that exposes custom network details, or add additional services to
+meet your requirements&mldr; This all plugs nicely into our example hierarchy. You
+can represent high level functionality as modules, which in turn may consume
+other modules for the heavy lifting, then customize how it all gets stitched
+together for each target environment.</p><p>One last aside before we jump in&mldr; The sample project is configured to use
+<a href=https://github.com/99designs/aws-vault>aws-vault</a>. If you aren&rsquo;t already using
+this great utility, you should be! Particularly useful when working across a lot
+of different accounts, it manages AWS-related environment details for you so you
+can focus on getting work done. It keeps credentials locked away in your OS'
+keychain and uses temporary credentials to access your infrastructure – a
+security win even if you only use a single account. You don&rsquo;t have to use
+aws-vault to use Terratest, but the scripts we&rsquo;ll be using assume it&rsquo;s in place.
+Feel free to refactor to meet your personal tastes, or take a few minutes to
+<a href=https://github.com/99designs/aws-vault>get aws-vault installed</a> before jumping into
+the examples.</p><h2 id=boilerplate>Boilerplate</h2><p>Before we can test, we need a few lines of boilerplate to load any required
+modules and configure Terratest. Luckily it&rsquo;s not much, and once you work it out
+for one project it&rsquo;s easy to copy or turn into a template:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>package</span> <span style=color:#a6e22e>test</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;testing&#34;</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;github.com/gruntwork-io/terratest/modules/terraform&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;github.com/stretchr/testify/assert&#34;</span>
+</span></span><span style=display:flex><span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>TestExamplesComplete</span>(<span style=color:#a6e22e>t</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>testing</span>.<span style=color:#a6e22e>T</span>) {
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Parallel</span>()
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>terraformOptions</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>terraform</span>.<span style=color:#a6e22e>Options</span>{
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>TerraformDir</span>: <span style=color:#e6db74>&#34;../../examples/complete&#34;</span>,
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>Upgrade</span>:      <span style=color:#66d9ef>true</span>,
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>VarFiles</span>: []<span style=color:#66d9ef>string</span>{<span style=color:#e6db74>&#34;fixtures.us-east-2.tfvars&#34;</span>},
+</span></span><span style=display:flex><span>	}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>defer</span> <span style=color:#a6e22e>terraform</span>.<span style=color:#a6e22e>Destroy</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>terraformOptions</span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>terraform</span>.<span style=color:#a6e22e>InitAndApply</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>terraformOptions</span>)
+</span></span></code></pre></div><p>Note how the terraform import is under a <code>terratest/modules</code> path. We&rsquo;ll see
+examples of using modules below, but it&rsquo;s a hint at Terratest&rsquo;s modular
+approach (<a href=https://github.com/gruntwork-io/terratest/tree/master/modules>check out the full list in their repo</a>,
+or the <a href=https://godoc.org/github.com/gruntwork-io/terratest>module documentation</a>).
+Aside from the expected Terraform coverage, there are modules for your IaaS of choice, ways
+to validate common DevOps tooling (Docker, k8s), as well as http and shell
+modules which provide a lot of flexibility.</p><p>Technically you don&rsquo;t need an assertion framework, but we also pull in <a href=https://github.com/stretchr/testify>testify</a>
+for simplified assertions. You can easily
+swap this out if you have a preferred framework, or drop it entirely by using
+native comparisons. Next, we configure <code>terraformOptions</code>, providing the path to
+the code to test and passing any var files to be used (relative to <code>TerraformDir</code>).
+Lastly, in typical test fashion, we defer a cleanup operation to ensure we
+don&rsquo;t leave artifacts around (more on this below), and use <code>InitAndApply</code> to run
+<code>terraform init</code> and <code>terraform apply</code> as part of each test (there are
+variations such as <code>InitAndPlan</code>, <code>Init</code>, <code>Plan</code> and <code>Apply</code>).</p><p>Since we are testing a simple example, we&rsquo;ll just build one &ldquo;complete&rdquo; test
+suite covering all functionality. In a real-world project supporting different
+use cases, you might have several test suites covering common configurations,
+with different fixtures customized accordingly.</p><h2 id=a-simple-test>A Simple Test</h2><p>In our contrived example, we have a network module that discovers the default
+VPC and associated subnets. In the real world you might have complicated
+infrastructure you manage or shared infrastructure from another team that you
+simply consume via state. Regardless, you&rsquo;ll typically need to utilize network
+components like VPCs and subnets to get your service deployed. Wouldn&rsquo;t it be
+nice to confirm your sensitive production service actually deploys to the
+desired network?</p><p>Let&rsquo;s write the simplest test we can&mldr; Since the example code selects the
+default VPC in an attempt to run anywhere, we&rsquo;ll build a test that confirms the
+returned VPC starts with the string <code>vpc-</code>. This is a great example of a useless
+test, but easy to extend in your environments. For example, you might want to
+ensure target VPCs have specific tags.</p><p>In classic red/green/refactor style, let&rsquo;s write the test in a way we know will
+fail:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>vpcID</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>terraform</span>.<span style=color:#a6e22e>Output</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>terraformOptions</span>, <span style=color:#e6db74>&#34;vpc_id&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>assert</span>.<span style=color:#a6e22e>Equal</span>(<span style=color:#a6e22e>t</span>, <span style=color:#e6db74>&#34;vpc-foobah&#34;</span>, <span style=color:#a6e22e>vpcID</span>)
+</span></span></code></pre></div><p>As expected, running our test returns:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>    <span style=color:#a6e22e>TestExamplesComplete</span>: <span style=color:#a6e22e>examples_complete_test</span>.<span style=color:#66d9ef>go</span>:<span style=color:#ae81ff>37</span>: 
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Error</span> <span style=color:#a6e22e>Trace</span>:    <span style=color:#a6e22e>examples_complete_test</span>.<span style=color:#66d9ef>go</span>:<span style=color:#ae81ff>37</span>
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Error</span>:          <span style=color:#a6e22e>Not</span> <span style=color:#a6e22e>equal</span>: 
+</span></span><span style=display:flex><span>                                <span style=color:#a6e22e>expected</span>: <span style=color:#e6db74>&#34;vpc-foobah&#34;</span>
+</span></span><span style=display:flex><span>                                <span style=color:#a6e22e>actual</span>  : <span style=color:#e6db74>&#34;vpc-7a5ce123&#34;</span>
+</span></span><span style=display:flex><span>                            
+</span></span><span style=display:flex><span>                                <span style=color:#a6e22e>Diff</span>:
+</span></span><span style=display:flex><span>                                <span style=color:#f92672>---</span> <span style=color:#a6e22e>Expected</span>
+</span></span><span style=display:flex><span>                                <span style=color:#f92672>+++</span> <span style=color:#a6e22e>Actual</span>
+</span></span><span style=display:flex><span>                                <span style=color:#960050;background-color:#1e0010>@@</span> <span style=color:#f92672>-</span><span style=color:#ae81ff>1</span> <span style=color:#f92672>+</span><span style=color:#ae81ff>1</span> <span style=color:#960050;background-color:#1e0010>@@</span>
+</span></span><span style=display:flex><span>                                <span style=color:#f92672>-</span><span style=color:#a6e22e>vpc</span><span style=color:#f92672>-</span><span style=color:#a6e22e>foobah</span>
+</span></span><span style=display:flex><span>                                <span style=color:#f92672>+</span><span style=color:#a6e22e>vpc</span><span style=color:#f92672>-</span><span style=color:#ae81ff>7</span><span style=color:#a6e22e>a5ce123</span>
+</span></span><span style=display:flex><span>                <span style=color:#a6e22e>Test</span>:           <span style=color:#a6e22e>TestExamplesComplete</span>
+</span></span><span style=display:flex><span><span style=color:#f92672>---</span> <span style=color:#a6e22e>FAIL</span>: <span style=color:#a6e22e>TestExamplesComplete</span> (<span style=color:#ae81ff>293.52</span><span style=color:#a6e22e>s</span>)
+</span></span><span style=display:flex><span><span style=color:#a6e22e>FAIL</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>exit</span> <span style=color:#a6e22e>status</span> <span style=color:#ae81ff>1</span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>FAIL</span>    <span style=color:#a6e22e>test</span>    <span style=color:#ae81ff>293.834</span><span style=color:#a6e22e>s</span> 
+</span></span></code></pre></div><p>It&rsquo;s always nice to confirm things fail when expected&mldr;
+Let&rsquo;s fix that:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;strings&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>vpcID</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>terraform</span>.<span style=color:#a6e22e>Output</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>terraformOptions</span>, <span style=color:#e6db74>&#34;vpc_id&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>assert</span>.<span style=color:#a6e22e>True</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>strings</span>.<span style=color:#a6e22e>HasPrefix</span>(<span style=color:#a6e22e>vpcID</span>, <span style=color:#e6db74>&#34;vpc-&#34;</span>))
+</span></span></code></pre></div><p>Note how we used the standard <code>strings</code> library to extend our test. This is
+generic enough it should match any returned VPC. Does it?</p><pre tabindex=0><code>--- PASS: TestExamplesComplete (291.19s)
+PASS
+ok      test    291.875s
+</code></pre><p>Awesome, now we have confidence things work as expected. Just to
+make this a bit more interesting, let&rsquo;s ensure the list of availability zones
+output by the network module match the region specified in our fixtures:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>availabilityZones</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>terraform</span>.<span style=color:#a6e22e>OutputList</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>terraformOptions</span>, <span style=color:#e6db74>&#34;availability_zones&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>az</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>availabilityZones</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>assert</span>.<span style=color:#a6e22e>True</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>strings</span>.<span style=color:#a6e22e>HasPrefix</span>(<span style=color:#a6e22e>az</span>, <span style=color:#e6db74>&#34;us-east-2&#34;</span>))
+</span></span><span style=display:flex><span>	}
+</span></span></code></pre></div><p>Ideally we&rsquo;ve added coverage, and everything still passes:</p><pre tabindex=0><code>--- PASS: TestExamplesComplete (308.07s)
+PASS
+ok      test    308.782s
+</code></pre><p>One gotcha to be aware of, there is a lot of output when
+tests are running. I&rsquo;ve purposefully zeroed in on the more informational parts.
+One section shows the outputs from the terraform run. Here&rsquo;s an example:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: Apply complete! Resources: 11 added, 0 changed, 0 destroyed.
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: Outputs:
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: availability_zones = [
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66:   &#34;us-east-2a&#34;,
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66:   &#34;us-east-2b&#34;,
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66:   &#34;us-east-2c&#34;,
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: ]
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: cloudwatch_log_group = /ecs/terratest-experiment-dev
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: dns_name = terratest-experiment-dev-2000011916.us-east-2.elb.amazonaws.com
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: ecr_repository_url = 012345678901.dkr.ecr.us-east-2.amazonaws.com/terratest-experiment-dev
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: subnet_cidrs = [
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66:   &#34;172.31.32.0/20&#34;,
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66:   &#34;172.31.0.0/20&#34;,
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66:   &#34;172.31.16.0/20&#34;,
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: ]
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: subnet_ids = [
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66:   &#34;subnet-abcdef&#34;,
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66:   &#34;subnet-ghjkil&#34;,
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66:   &#34;subnet-mnopqr&#34;,
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: ]
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: vpc_cidr = 172.31.0.0/16
+</span></span><span style=display:flex><span>TestExamplesComplete 2020-07-26T17:38:06-04:00 logger.go:66: vpc_id = vpc-7a5ce123
+</span></span></code></pre></div><p>When I first started writing tests that compare outputs, I
+naively reached for <code>terraform.Output</code> and tried treating things like <code>subnet_cidrs</code>
+as lists. <code>Output</code> returns a string. Be aware of Terratest&rsquo;s other output methods
+such as <code>OutputList</code> (seen above) and <code>OutputMap</code>. These will let you use native
+slices and map methods without cryptic errors about byte slices. :-)</p><p>That&rsquo;s a lot to take in for the basic example&mldr; One last thing before we move
+on. It takes awhile, huh? That&rsquo;s why I consider Terratest more of a &ldquo;e-2-e&rdquo;
+or &ldquo;integration&rdquo; test tool (vs unit tests that typically only take seconds to run).
+You can help this a bit by testing with intent (write efficient tests,
+don&rsquo;t strive for 100% coverage), but in the end running
+Terraform and confirming the actions it took takes time.</p><p><a href=https://youtu.be/xhHOW0EF5u8>Watch this video for a great overview of how to test infrastructure code.</a></p><h2 id=using-modules>Using Modules</h2><p>Technically, you&rsquo;ve already used modules&mldr; <code>terraform</code> is a module like all the
+others. Let&rsquo;s extend this a bit by roping in the <code>aws</code> module to do some
+IaaS-specific probing:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span><span style=color:#f92672>import</span> (
+</span></span><span style=display:flex><span>	<span style=color:#e6db74>&#34;github.com/gruntwork-io/terratest/modules/aws&#34;</span>
+</span></span><span style=display:flex><span>	<span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>)
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// ...
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>
+</span></span><span style=display:flex><span>	<span style=color:#a6e22e>deploymentSubnets</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>terraform</span>.<span style=color:#a6e22e>OutputList</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>terraformOptions</span>, <span style=color:#e6db74>&#34;deployment_subnets&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>s</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>deploymentSubnets</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>assert</span>.<span style=color:#a6e22e>True</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>aws</span>.<span style=color:#a6e22e>IsPublicSubnet</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>s</span>, <span style=color:#e6db74>&#34;us-east-2&#34;</span>))
+</span></span><span style=display:flex><span>	}
+</span></span></code></pre></div><p>Our network module just exposes the default subnets provided
+by AWS. In your case you likely have public and private subnets. Something like
+a database cluster is usually on a set of private subnets. Just
+<code>aws.IsPrivateSubnet</code>, right? Good guess, but this is where browsing the module
+documentation pays off. As it turns out, there is no <code>IsPrivateSubnet</code> method, but
+that&rsquo;s easy to work around by inverting our assertion:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-go data-lang=go><span style=display:flex><span>	<span style=color:#a6e22e>privateSubnets</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>terraform</span>.<span style=color:#a6e22e>OutputList</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>terraformOptions</span>, <span style=color:#e6db74>&#34;private_subnet_ids&#34;</span>)
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>s</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>privateSubnets</span> {
+</span></span><span style=display:flex><span>		<span style=color:#a6e22e>assert</span>.<span style=color:#a6e22e>False</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>aws</span>.<span style=color:#a6e22e>IsPublicSubnet</span>(<span style=color:#a6e22e>t</span>, <span style=color:#a6e22e>s</span>, <span style=color:#e6db74>&#34;us-east-2&#34;</span>))
+</span></span><span style=display:flex><span>	}
+</span></span></code></pre></div><h2 id=advanced-topics>Advanced Topics</h2><p>I&rsquo;m sure you&rsquo;ve noticed I kept showing tests, but not how I ran them&mldr; Since
+there&rsquo;s a bit of setup and you&rsquo;ll likely be running tests a lot (including in
+pipelines), I prefer a simple &ldquo;test harness&rdquo; to add consistency and reduce
+typing. One way is using a Makefile:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-make data-lang=make><span style=display:flex><span>AWS_PROFILE <span style=color:#f92672>:=</span> personal
+</span></span><span style=display:flex><span>REGION <span style=color:#f92672>:=</span> us-east-2
+</span></span><span style=display:flex><span>VAULT_CMD <span style=color:#f92672>:=</span> aws-vault exec <span style=color:#66d9ef>$(</span>AWS_PROFILE<span style=color:#66d9ef>)</span> --
+</span></span><span style=display:flex><span><span style=color:#75715e># TF_CMD := $$GOPATH/bin/terraform
+</span></span></span><span style=display:flex><span><span style=color:#75715e></span>TF_CMD <span style=color:#f92672>:=</span> terraform
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>export </span>TF_DATA_DIR <span style=color:#f92672>?=</span> <span style=color:#66d9ef>$(</span>CURDIR<span style=color:#66d9ef>)</span>/.terraform
+</span></span><span style=display:flex><span><span style=color:#66d9ef>export </span>TF_CLI_ARGS_init <span style=color:#f92672>?=</span> -get-plugins<span style=color:#f92672>=</span>true
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>init</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>	cd src <span style=color:#f92672>&amp;&amp;</span> go mod init test
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>tidy</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>	cd src <span style=color:#f92672>&amp;&amp;</span> go mod tidy
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>test</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>	<span style=color:#66d9ef>$(</span>TF_CMD<span style=color:#66d9ef>)</span> fmt --write<span style=color:#f92672>=</span>false -check -diff -recursive ..
+</span></span><span style=display:flex><span>	cd src <span style=color:#f92672>&amp;&amp;</span> <span style=color:#66d9ef>$(</span>VAULT_CMD<span style=color:#66d9ef>)</span> go test -v -timeout 30m
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#a6e22e>clean</span><span style=color:#f92672>:</span>
+</span></span><span style=display:flex><span>	cd src <span style=color:#f92672>&amp;&amp;</span> rm -rf <span style=color:#66d9ef>$(</span>TF_DATA_DIR<span style=color:#66d9ef>)</span> go.mod go.sum
+</span></span></code></pre></div><p>Another thing to think about if running a lot of parallel tests
+or using Terratest in a large organization is how to safely orchestrate tests at
+scale. Since tests are running Terraform and creating real resources, it&rsquo;s
+possible to have collisions if teams are testing in the same account. Even when
+doing everything right, you could leave artifacts behind or get something in a
+bad state. Agree on an approach to reduce stress&mldr; One way is dedicated test
+accounts. It&rsquo;s good to test new code in disposable environments. While you may
+ultimately run your tests in production to validate deployments, by then you
+will have confidence the code works as expected. Another option is tagging resources
+according to a schema that allows automated cleanup. Combining these tool is even better,
+using something like <a href=https://github.com/rebuy-de/aws-nuke>aws-nuke</a> to auto-wipe
+all resources in dedicated dev/test accounts on an agreed schedule.</p><h2 id=conclusion>Conclusion</h2><p>If your project is worth creating, it&rsquo;s probably worth testing&mldr; While wasteful
+tests are to be avoided, testing with intent is essential to ensure quality.
+Luckily, it&rsquo;s easy to get up and running with Terratest. You don&rsquo;t need to
+reinvent the wheel, you can leverage a veritable Swiss Army Knife to cover your
+infrastructure code and leverage the flexibility of modules to creatively extend
+validation beyond Terraform itself.</p><p>Best of all, Terratest is open source. Whether you want to help the community by
+submitting PRs or read the code to understand how it works and gain confidence
+in your tooling, the code is there for you to browse and extend.</p></div></section></body></html>
