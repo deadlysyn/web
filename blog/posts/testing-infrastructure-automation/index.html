@@ -21,10 +21,13 @@ downloading releases and following manual instructions (<a href=https://golang.o
 it&rsquo;s likely just a <code>brew install go</code> away. Aside from the installation,
 you&rsquo;ll want to create a workspace (traditionally <code>${HOME}/go</code>) and
 <a href=https://golang.org/doc/install/source#environment>add some new environment variables to your shell profile</a>.
-Here&rsquo;s mine:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ grep GO ~/.zshrc         
+Here&rsquo;s mine:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ grep GO .zshrc
 </span></span><span style=display:flex><span>export GOPATH=&#34;${HOME}/go&#34;
-</span></span><span style=display:flex><span>export GOROOT=&#34;$(brew --prefix golang)/libexec&#34;
-</span></span><span style=display:flex><span>export PATH=&#34;${PATH}:${GOPATH}/bin:${GOROOT}/bin&#34;
+</span></span><span style=display:flex><span>export GOBIN=&#34;${GOPATH}/bin&#34;
+</span></span><span style=display:flex><span>export GOROOT=&#34;/usr/lib/go&#34;
+</span></span><span style=display:flex><span>export PATH=&#34;${GOBIN}:${GOROOT}/bin:${PATH}&#34;
+</span></span><span style=display:flex><span>test -d &#34;${GOPATH}&#34; || mkdir &#34;${GOPATH}&#34;
+</span></span><span style=display:flex><span>test -d &#34;${GOPATH}/src/github.com&#34; || mkdir -p &#34;${GOPATH}/src/github.com&#34;
 </span></span></code></pre></div><p>For this project we&rsquo;ll use the organization scheme
 below – feel free to experiment and pick what works best for you.
 There are a few common patterns you&rsquo;ll see when browsing
