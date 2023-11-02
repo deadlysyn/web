@@ -250,7 +250,7 @@ possible to have name collisions if teams are testing in the same account.
 <a href=https://github.com/cloudposse/terraform-null-label>Using a module to define a consistent naming convention</a>
 can help.</p><p>In larger teams, or anywhere there are &ldquo;hotspots&rdquo; with multiple engineers
 working on similar areas of your infrastructure, when pipelines randomly fire you
-could end up munging state. <a href=https://github.com/cloudposse/terraform-aws-tfstate-backend>Use a module to bolt this on yourself</a>,
+could end up munging state. <a href=https://github.com/cloudposse/terraform-aws-tfstate-backend>Use a module to bolt state locking on yourself</a>,
 or let a tool like <a href=https://terragrunt.gruntwork.io/docs/features/keep-your-remote-state-configuration-dry>terragrunt handle it for you</a>.</p><p>Often when testing you leave artifacts behind or get something in a
 bad state. How will you deal with these resources? One way is dedicated test
 accounts. Disposable environments provide full isolation. While you may
