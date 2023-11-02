@@ -8,85 +8,113 @@
 <span class=tag><a href=https://deadlysyn.com/blog/tags/terraform>terraform</a></span></div></section><section class=section><div class="container is-max-desktop content"><p><a href=https://www.terraform.io>Terraform</a> has become the lingua franca of DevOps. As
 Terraform&rsquo;s popularity grew, the surrounding ecosystem matured to help solve
 common challenges. Two great examples are <a href=https://terratest.gruntwork.io>Terratest</a>
-which provides a modular testing framework for
-your IaC [/blog/posts/testing-infrastructure-automation], and
-<a href=https://github.com/GoogleCloudPlatform/terraformer>Terraformer</a>
+which provides a <a href=/blog/posts/testing-infrastructure-automation>modular testing framework for your IaC</a>,
+and <a href=https://github.com/GoogleCloudPlatform/terraformer>Terraformer</a>
 which helps you quickly get
 existing infrastructure managed by Terraform. In the project&rsquo;s own words,
-Terraformer is reverse terraform. It provides a CLI tool to generate terraform
+<em>Terraformer is reverse terraform.</em> It provides a CLI tool to generate terraform
 files from existing infrastructure. Let&rsquo;s see it in action&mldr;</p><h2 id=setup>Setup</h2><p>While you can install from source, installation is usually as easy as reaching
 for a cold brew&mldr;</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ brew install terraformer
-</span></span></code></pre></div><p>Terraformer is available as Homebrew and Chcolatey packagesSince Homebrew [https://brew.sh] works on Linux these days, this likely works
+</span></span></code></pre></div><p>Since <a href=https://brew.sh>Homebrew</a> works on Linux these days, this likely works
 for most readers&mldr; If you do prefer a manual install, one advantage is being
-able to select providers in the process:</p><p>export PROVIDER=aws
-curl -LO <a href=https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl>https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl</a> -s <a href=https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest>https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest</a> | grep tag_name | cut -d &lsquo;"&rsquo; -f 4)/terraformer-${PROVIDER}-linux-amd64
-chmod +x terraformer-${PROVIDER}-linux-amd64
-sudo mv terraformer-${PROVIDER}-linux-amd64 /usr/local/bin/terraformer</p><p>Manual install with provider selectionWhatever the approach, you should see the
-help message once successful:</p><p>➜ terraformer<br>Usage:
-[command]</p><p>Available Commands:
-help Help about any command
-import Import current state to Terraform configuration
-plan Plan to import current state to Terraform configuration
-version Print the version number of Terraformer</p><p>Flags:
--h, &ndash;help help for this command
--v, &ndash;version version for this command</p><p>Use " [command] &ndash;help" for more information about a command.</p><p>A simple, useful CLIImporting Resources
-Terraformer supports a number of Terraform&rsquo;s providers – but not all. Out of the
+able to select providers in the process:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>export PROVIDER=aws
+</span></span><span style=display:flex><span>curl -LO https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl -s https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest | grep tag_name | cut -d &#39;&#34;&#39; -f 4)/terraformer-${PROVIDER}-linux-amd64
+</span></span><span style=display:flex><span>chmod +x terraformer-${PROVIDER}-linux-amd64
+</span></span><span style=display:flex><span>sudo mv terraformer-${PROVIDER}-linux-amd64 /usr/local/bin/terraformer
+</span></span></code></pre></div><p>Whatever the approach, you should see the
+help message once successful:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ terraformer
+</span></span><span style=display:flex><span>Usage:
+</span></span><span style=display:flex><span>   [command]
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>Available Commands:
+</span></span><span style=display:flex><span>  help        Help about any command
+</span></span><span style=display:flex><span>  import      Import current state to Terraform configuration
+</span></span><span style=display:flex><span>  plan        Plan to import current state to Terraform configuration
+</span></span><span style=display:flex><span>  version     Print the version number of Terraformer
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>Flags:
+</span></span><span style=display:flex><span>  -h, --help      help for this command
+</span></span><span style=display:flex><span>  -v, --version   version for this command
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>Use &#34; [command] --help&#34; for more information about a command.
+</span></span></code></pre></div><h2 id=importing-resources>Importing Resources</h2><p>Terraformer supports a number of Terraform&rsquo;s providers – but not all. Out of the
 box, you get support for every major IaaS and common things you may have heard
-of like GitHub and Kubernetes. 😁 The nice thing is this is all open source, so
-if your favorite provider isn&rsquo;t supported you have the power to contribute!</p><p>For a simple example, we&rsquo;ll use the Datadog [https://www.datadoghq.com] provider
+of like GitHub and Kubernetes. The nice thing is this is all open source, so
+if your favorite provider isn&rsquo;t supported you have the power to contribute!</p><p>For a simple example, we&rsquo;ll use the <a href=https://www.datadoghq.com>Datadog</a> provider
 to import a dashboard and synthetic test. In my professional life, we like to
 view monitoring as IaC just like the infrastructure itself. However, monitoring
 often evolves organically. Some times it&rsquo;s just easier to prove something out in
 a UI. Either way, it&rsquo;s nice to be able to import your work of art rather than
 starting with a clean slate. Terraformer to the rescue&mldr;</p><p>Let&rsquo;s create a work directory to experiment, and import a resource&mldr; Similar to
-Terraform, Terraformer has a plan step. That will spit out a plan.json you can
+Terraform, Terraformer has a plan step. That will spit out a <code>plan.json</code> you can
 review before doing the actual import. Files are created in
-generated/${providerName} directories:</p><p>➜ mkdir ~/datadog; cd ~/datadog
-➜ terraformer plan datadog &ndash;resources=synthetics &ndash;filter=datadog_synthetics_test=abc-123-xyz &ndash;api-key=${DD_API_KEY} &ndash;app-key=${DD_APP_KEY}<br>2020/08/12 11:09:44 datadog importing&mldr; synthetics
-2020/08/12 11:09:44 open /Users/mhoskins/.terraform.d/plugins/darwin_amd64: no such file or directory</p><p>🤔Wait a minute, an error message? It&rsquo;s not very helpful either, but at least it
+<code>generated/${providerName}</code> directories:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ mkdir ~/datadog; cd ~/datadog
+</span></span><span style=display:flex><span>❯ terraformer plan datadog --resources=synthetics --filter=datadog_synthetics_test=abc-123-xyz --api-key=${DD_API_KEY} --app-key=${DD_APP_KEY}  
+</span></span><span style=display:flex><span>2020/08/12 11:09:44 datadog importing... synthetics
+</span></span><span style=display:flex><span>2020/08/12 11:09:44 open /Users/mhoskins/.terraform.d/plugins/darwin_amd64: no such file or directory
+</span></span></code></pre></div><p>Wait a minute, an error message? It&rsquo;s not very helpful either, but at least it
 mentions plugins&mldr; Let&rsquo;s see if configuring the Datadog provider stops harshing
-our buzz:</p><p>➜ echo &lsquo;provider &ldquo;datadog&rdquo; {}&rsquo; > main.tf
-➜ terraform init
-&mldr;</p><ul><li>provider.datadog: version = &ldquo;~> 2.12&rdquo;</li></ul><p>Terraform has been successfully initialized!</p><p>Terraformer needs providers installedNow that we&rsquo;ve wired up the provider, try
-our plan again:</p><p>➜ terraformer plan datadog &ndash;resources=synthetics &ndash;filter=datadog_synthetics_test=abc-123-xyz &ndash;api-key=${DD_API_KEY} &ndash;app-key=${DD_APP_KEY}
-2020/08/13 12:13:15 datadog importing&mldr; synthetics
-2020/08/13 12:13:17 Refreshing state&mldr; datadog_synthetics_test.tfer&ndash;synthetics_abc-002D-123-002D-xyz
-2020/08/13 12:13:18 Saving planfile to generated/datadog/terraformer/plan.json</p><p>➜ terraformer import plan generated/datadog/terraformer/plan.json 2020/08/13 12:14:34 datadog Connecting&mldr;.
-2020/08/13 12:14:34 datadog save synthetics
-2020/08/13 12:14:34 datadog save tfstate for synthetics</p><p>A successful plan and importThat went a lot better! We&rsquo;re able to plan and
+our buzz:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ echo &#39;provider &#34;datadog&#34; {}&#39; &gt; main.tf
+</span></span><span style=display:flex><span>❯ terraform init
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>* provider.datadog: version = &#34;~&gt; 2.12&#34;
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>Terraform has been successfully initialized!
+</span></span></code></pre></div><p>Now that we&rsquo;ve wired up the provider, try our plan again:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ terraformer plan datadog --resources=synthetics --filter=datadog_synthetics_test=abc-123-xyz --api-key=${DD_API_KEY} --app-key=${DD_APP_KEY}
+</span></span><span style=display:flex><span>2020/08/13 12:13:15 datadog importing... synthetics
+</span></span><span style=display:flex><span>2020/08/13 12:13:17 Refreshing state... datadog_synthetics_test.tfer--synthetics_abc-002D-123-002D-xyz
+</span></span><span style=display:flex><span>2020/08/13 12:13:18 Saving planfile to generated/datadog/terraformer/plan.json
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>❯ terraformer import plan generated/datadog/terraformer/plan.json 2020/08/13 12:14:34 datadog Connecting.... 
+</span></span><span style=display:flex><span>2020/08/13 12:14:34 datadog save synthetics
+</span></span><span style=display:flex><span>2020/08/13 12:14:34 datadog save tfstate for synthetics
+</span></span></code></pre></div><p>That went a lot better! We&rsquo;re able to plan and
 import a resource. We could also import several resources at once&mldr; It won&rsquo;t
-make a mess, but simply pull in any changes or the same resources idemotently:</p><p>➜ terraformer plan datadog &ndash;resources=dashboard,synthetics &ndash;filter=datadog_dashboard=xyz-efg-cb9 &ndash;filter=datadog_synthetics_test=abc-123-xyz &ndash;api-key=${DD_API_KEY} &ndash;app-key=${DD_APP_KEY}
-2020/08/13 15:05:49 datadog importing&mldr; dashboard
-2020/08/13 15:05:51 Refreshing state&mldr; datadog_dashboard.tfer&ndash;dashboard_xyz-002D-efg-002D-cb9
-2020/08/13 15:05:51 datadog importing&mldr; synthetics
-2020/08/13 15:05:52 Refreshing state&mldr; datadog_synthetics_test.tfer&ndash;synthetics_abc-002D-123-002D-xyz
-2020/08/13 15:05:52 Saving planfile to generated/datadog/terraformer/plan.json</p><p>Acting on multiple resourcesRefactoring
-Now we&rsquo;ve got our dashboard and synthetic resources in generated/datadog. This
+make a mess, but simply pull in any changes or the same resources idemotently:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ terraformer plan datadog --resources=dashboard,synthetics --filter=datadog_dashboard=xyz-efg-cb9 --filter=datadog_synthetics_test=abc-123-xyz --api-key=${DD_API_KEY} --app-key=${DD_APP_KEY}
+</span></span><span style=display:flex><span>2020/08/13 15:05:49 datadog importing... dashboard
+</span></span><span style=display:flex><span>2020/08/13 15:05:51 Refreshing state... datadog_dashboard.tfer--dashboard_xyz-002D-efg-002D-cb9
+</span></span><span style=display:flex><span>2020/08/13 15:05:51 datadog importing... synthetics
+</span></span><span style=display:flex><span>2020/08/13 15:05:52 Refreshing state... datadog_synthetics_test.tfer--synthetics_abc-002D-123-002D-xyz
+</span></span><span style=display:flex><span>2020/08/13 15:05:52 Saving planfile to generated/datadog/terraformer/plan.json
+</span></span></code></pre></div><h2 id=refactoring>Refactoring</h2><p>Now we&rsquo;ve got our dashboard and synthetic resources in generated/datadog. This
 is a great starting point, but before committing you&rsquo;ll usually want to organize
-a bit and do some cleanup to integrate with your project:</p><p>➜ cp generated/datadog/dashboard/dashboard.tf .<br>➜ cp generated/datadog/synthetics/synthetics_test.tf .
-➜ chmod 644 *.tf
-➜ cat main.tf<br>terraform {
-required_version = &ldquo;~> 0.12.0&rdquo;</p><p>required_providers {
-datadog = &ldquo;~> 2.12&rdquo;
-}
-}</p><h1 id=reads-dd_api_key-and-dd_app_key-from-environment>Reads DD_API_KEY and DD_APP_KEY from environment</h1><p>provider &ldquo;datadog&rdquo; {}
-➜ git add *.tf
-➜ git commit -am &lsquo;initial commit&rsquo;</p><p>Cleaning upDoes it work as expected?</p><p>➜ terraform plan
-&mldr;
-Plan: 2 to add, 0 to change, 0 to destroy.
-➜ terraform apply
-&mldr;
-datadog_synthetics_test.tfer&ndash;abc-002D-123-002D-xyz: Creating&mldr;
-datadog_dashboard.tfer&ndash;dashboard_xyz-002D-efg-002D-cb9: Creating&mldr;
-datadog_synthetics_test.tfer&ndash;synthetics_abc-002D-123-002D-xyz: Creation complete after 0s [id=aaa-bbb-ccc]
-datadog_dashboard.tfer&ndash;dashboard_xyz-002D-efg-002D-cb9: Creation complete after 1s [id=ddd-eee-fff]</p><p>Apply complete! Resources: 2 added, 0 changed, 0 destroyed.</p><p>Booyah!Conclusion
-&ldquo;Legacy&rdquo; services which don&rsquo;t fit nicely into the latest toolchain du&rsquo;jour are a
+a bit and do some cleanup to integrate with your project:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ cp generated/datadog/dashboard/dashboard.tf .  
+</span></span><span style=display:flex><span>❯ cp generated/datadog/synthetics/synthetics_test.tf .
+</span></span><span style=display:flex><span>❯ chmod 644 *.tf
+</span></span><span style=display:flex><span>❯ cat main.tf                                                                                          
+</span></span><span style=display:flex><span>terraform {
+</span></span><span style=display:flex><span>  required_version = &#34;~&gt; 0.12.0&#34;
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>  required_providers {
+</span></span><span style=display:flex><span>    datadog = &#34;~&gt; 2.12&#34;
+</span></span><span style=display:flex><span>  }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span># Reads DD_API_KEY and DD_APP_KEY from environment
+</span></span><span style=display:flex><span>provider &#34;datadog&#34; {}
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>❯ git add *.tf
+</span></span><span style=display:flex><span>❯ git commit -am &#39;initial commit&#39;
+</span></span></code></pre></div><p>Does it work as expected?</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ terraform plan
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>Plan: 2 to add, 0 to change, 0 to destroy.
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>❯ terraform apply
+</span></span><span style=display:flex><span>...
+</span></span><span style=display:flex><span>datadog_synthetics_test.tfer--abc-002D-123-002D-xyz: Creating...
+</span></span><span style=display:flex><span>datadog_dashboard.tfer--dashboard_xyz-002D-efg-002D-cb9: Creating...
+</span></span><span style=display:flex><span>datadog_synthetics_test.tfer--synthetics_abc-002D-123-002D-xyz: Creation complete after 0s [id=aaa-bbb-ccc]
+</span></span><span style=display:flex><span>datadog_dashboard.tfer--dashboard_xyz-002D-efg-002D-cb9: Creation complete after 1s [id=ddd-eee-fff]
+</span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010>
+</span></span></span><span style=display:flex><span><span style=color:#960050;background-color:#1e0010></span>Apply complete! Resources: 2 added, 0 changed, 0 destroyed.
+</span></span></code></pre></div><h2 id=conclusion>Conclusion</h2><p>&ldquo;Legacy&rdquo; services which don&rsquo;t fit nicely into the latest toolchain du&rsquo;jour are a
 common problem in larger infrastructures. Even in smaller, hipper, more agile
 shops you often have organic growth or PoCs-turned-production that you&rsquo;d like to
 whip into shape. Terraformer can help wrangle existing infrastructure, quickly
-importing resources from supported providers. While the provider list is not as
-extensive as Terraform&rsquo;s out of the box, common IaaS and DevOps tools are
-covered.</p><p>Since it&rsquo;s an open source project, you have complete visiblity into what you are
+importing resources from supported providers. While the
+<a href=https://github.com/GoogleCloudPlatform/terraformer/tree/master/docs>provider list</a>
+is not as extensive as Terraform&rsquo;s out of the box, common IaaS and DevOps tools
+are covered.</p><p>Since it&rsquo;s an open source project, you have complete visiblity into what you are
 running and can help the community by contributing code. Terraformer can easily
 import individual resources, or an entire service at once – perhaps you want to
 write automation to generate the import commands? Importing is low-stress, with
