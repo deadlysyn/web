@@ -1,0 +1,94 @@
+<!doctype html><html lang=en-us><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="Automation, CI/CD, cloud, culture, DevOps, engineering, full stack development, infrastructure, Linux, observability, SRE, UNIX, OSS"><title>Terraformer Intro</title><style>html body{font-family:source code pro,monospace;background-color:#fff}:root{--accent:#fe8019}.highlight{--accent:#fbf1c7;padding-bottom:20px}</style><link rel=stylesheet href=https://deadlysyn.com/blog/css/main.css><link rel=stylesheet href="https://fonts.googleapis.com/css?family=Source%20Code%20Pro"><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/styles/base16/gruvbox-dark-hard.min.css><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/bulma/0.9.3/css/bulma.min.css integrity="sha512-IgmDkwzs96t4SrChW29No3NXBIBv8baW490zk5aXvhCD8vuZM3yUSkbyTBcXohkySecyzIrUwiF/qV0cuPcL3Q==" crossorigin=anonymous referrerpolicy=no-referrer><link rel=stylesheet href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css integrity="sha512-Fo3rlrZj/k7ujTnHg4CGR2D7kSs0v4LLanw2qksYuRlEzO+tcaEPQogQ0KaoGN26/zrn20ImR1DfuLWnOo7aBA==" crossorigin=anonymous referrerpolicy=no-referrer><script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.3.1/highlight.min.js></script>
+<script>hljs.highlightAll()</script><meta name=generator content="Hugo 0.119.0"></head><body><section class=section><div class="container has-text-centered"><span class=icon><a class="button is-medium is-white" href=https://deadlysyn.com><i class="fa-solid fa-house"></i></a>
+<a class="button is-medium is-white" href=https://deadlysyn.com/blog><i class="fa-solid fa-book-open"></i></a>
+<a class="button is-medium is-white" href=https://github.com/deadlysyn><i class="fa-brands fa-github"></i></a>
+<a class="button is-medium is-white" href=https://www.linkedin.com/in/deadlysyn><i class="fa-brands fa-linkedin"></i></a></span></div></section><section class=section><div class="container is-max-desktop has-text-centered"><h3 class="title is-3">Terraformer Intro</h3><h5 class="title is-5"></h5><span class=tag><a href=https://deadlysyn.com/blog/tags/aws>aws</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/iac>iac</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/oss>oss</a></span>
+<span class=tag><a href=https://deadlysyn.com/blog/tags/terraform>terraform</a></span></div></section><section class=section><div class="container is-max-desktop content"><p><a href=https://www.terraform.io>Terraform</a> has become the lingua franca of DevOps. As
+Terraform&rsquo;s popularity grew, the surrounding ecosystem matured to help solve
+common challenges. Two great examples are <a href=https://terratest.gruntwork.io>Terratest</a>
+which provides a modular testing framework for
+your IaC [/blog/posts/testing-infrastructure-automation], and
+<a href=https://github.com/GoogleCloudPlatform/terraformer>Terraformer</a>
+which helps you quickly get
+existing infrastructure managed by Terraform. In the project&rsquo;s own words,
+Terraformer is reverse terraform. It provides a CLI tool to generate terraform
+files from existing infrastructure. Let&rsquo;s see it in action&mldr;</p><h2 id=setup>Setup</h2><p>While you can install from source, installation is usually as easy as reaching
+for a cold brew&mldr;</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-console data-lang=console><span style=display:flex><span>❯ brew install terraformer
+</span></span></code></pre></div><p>Terraformer is available as Homebrew and Chcolatey packagesSince Homebrew [https://brew.sh] works on Linux these days, this likely works
+for most readers&mldr; If you do prefer a manual install, one advantage is being
+able to select providers in the process:</p><p>export PROVIDER=aws
+curl -LO <a href=https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl>https://github.com/GoogleCloudPlatform/terraformer/releases/download/$(curl</a> -s <a href=https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest>https://api.github.com/repos/GoogleCloudPlatform/terraformer/releases/latest</a> | grep tag_name | cut -d &lsquo;"&rsquo; -f 4)/terraformer-${PROVIDER}-linux-amd64
+chmod +x terraformer-${PROVIDER}-linux-amd64
+sudo mv terraformer-${PROVIDER}-linux-amd64 /usr/local/bin/terraformer</p><p>Manual install with provider selectionWhatever the approach, you should see the
+help message once successful:</p><p>➜ terraformer<br>Usage:
+[command]</p><p>Available Commands:
+help Help about any command
+import Import current state to Terraform configuration
+plan Plan to import current state to Terraform configuration
+version Print the version number of Terraformer</p><p>Flags:
+-h, &ndash;help help for this command
+-v, &ndash;version version for this command</p><p>Use " [command] &ndash;help" for more information about a command.</p><p>A simple, useful CLIImporting Resources
+Terraformer supports a number of Terraform&rsquo;s providers – but not all. Out of the
+box, you get support for every major IaaS and common things you may have heard
+of like GitHub and Kubernetes. 😁 The nice thing is this is all open source, so
+if your favorite provider isn&rsquo;t supported you have the power to contribute!</p><p>For a simple example, we&rsquo;ll use the Datadog [https://www.datadoghq.com] provider
+to import a dashboard and synthetic test. In my professional life, we like to
+view monitoring as IaC just like the infrastructure itself. However, monitoring
+often evolves organically. Some times it&rsquo;s just easier to prove something out in
+a UI. Either way, it&rsquo;s nice to be able to import your work of art rather than
+starting with a clean slate. Terraformer to the rescue&mldr;</p><p>Let&rsquo;s create a work directory to experiment, and import a resource&mldr; Similar to
+Terraform, Terraformer has a plan step. That will spit out a plan.json you can
+review before doing the actual import. Files are created in
+generated/${providerName} directories:</p><p>➜ mkdir ~/datadog; cd ~/datadog
+➜ terraformer plan datadog &ndash;resources=synthetics &ndash;filter=datadog_synthetics_test=abc-123-xyz &ndash;api-key=${DD_API_KEY} &ndash;app-key=${DD_APP_KEY}<br>2020/08/12 11:09:44 datadog importing&mldr; synthetics
+2020/08/12 11:09:44 open /Users/mhoskins/.terraform.d/plugins/darwin_amd64: no such file or directory</p><p>🤔Wait a minute, an error message? It&rsquo;s not very helpful either, but at least it
+mentions plugins&mldr; Let&rsquo;s see if configuring the Datadog provider stops harshing
+our buzz:</p><p>➜ echo &lsquo;provider &ldquo;datadog&rdquo; {}&rsquo; > main.tf
+➜ terraform init
+&mldr;</p><ul><li>provider.datadog: version = &ldquo;~> 2.12&rdquo;</li></ul><p>Terraform has been successfully initialized!</p><p>Terraformer needs providers installedNow that we&rsquo;ve wired up the provider, try
+our plan again:</p><p>➜ terraformer plan datadog &ndash;resources=synthetics &ndash;filter=datadog_synthetics_test=abc-123-xyz &ndash;api-key=${DD_API_KEY} &ndash;app-key=${DD_APP_KEY}
+2020/08/13 12:13:15 datadog importing&mldr; synthetics
+2020/08/13 12:13:17 Refreshing state&mldr; datadog_synthetics_test.tfer&ndash;synthetics_abc-002D-123-002D-xyz
+2020/08/13 12:13:18 Saving planfile to generated/datadog/terraformer/plan.json</p><p>➜ terraformer import plan generated/datadog/terraformer/plan.json 2020/08/13 12:14:34 datadog Connecting&mldr;.
+2020/08/13 12:14:34 datadog save synthetics
+2020/08/13 12:14:34 datadog save tfstate for synthetics</p><p>A successful plan and importThat went a lot better! We&rsquo;re able to plan and
+import a resource. We could also import several resources at once&mldr; It won&rsquo;t
+make a mess, but simply pull in any changes or the same resources idemotently:</p><p>➜ terraformer plan datadog &ndash;resources=dashboard,synthetics &ndash;filter=datadog_dashboard=xyz-efg-cb9 &ndash;filter=datadog_synthetics_test=abc-123-xyz &ndash;api-key=${DD_API_KEY} &ndash;app-key=${DD_APP_KEY}
+2020/08/13 15:05:49 datadog importing&mldr; dashboard
+2020/08/13 15:05:51 Refreshing state&mldr; datadog_dashboard.tfer&ndash;dashboard_xyz-002D-efg-002D-cb9
+2020/08/13 15:05:51 datadog importing&mldr; synthetics
+2020/08/13 15:05:52 Refreshing state&mldr; datadog_synthetics_test.tfer&ndash;synthetics_abc-002D-123-002D-xyz
+2020/08/13 15:05:52 Saving planfile to generated/datadog/terraformer/plan.json</p><p>Acting on multiple resourcesRefactoring
+Now we&rsquo;ve got our dashboard and synthetic resources in generated/datadog. This
+is a great starting point, but before committing you&rsquo;ll usually want to organize
+a bit and do some cleanup to integrate with your project:</p><p>➜ cp generated/datadog/dashboard/dashboard.tf .<br>➜ cp generated/datadog/synthetics/synthetics_test.tf .
+➜ chmod 644 *.tf
+➜ cat main.tf<br>terraform {
+required_version = &ldquo;~> 0.12.0&rdquo;</p><p>required_providers {
+datadog = &ldquo;~> 2.12&rdquo;
+}
+}</p><h1 id=reads-dd_api_key-and-dd_app_key-from-environment>Reads DD_API_KEY and DD_APP_KEY from environment</h1><p>provider &ldquo;datadog&rdquo; {}
+➜ git add *.tf
+➜ git commit -am &lsquo;initial commit&rsquo;</p><p>Cleaning upDoes it work as expected?</p><p>➜ terraform plan
+&mldr;
+Plan: 2 to add, 0 to change, 0 to destroy.
+➜ terraform apply
+&mldr;
+datadog_synthetics_test.tfer&ndash;abc-002D-123-002D-xyz: Creating&mldr;
+datadog_dashboard.tfer&ndash;dashboard_xyz-002D-efg-002D-cb9: Creating&mldr;
+datadog_synthetics_test.tfer&ndash;synthetics_abc-002D-123-002D-xyz: Creation complete after 0s [id=aaa-bbb-ccc]
+datadog_dashboard.tfer&ndash;dashboard_xyz-002D-efg-002D-cb9: Creation complete after 1s [id=ddd-eee-fff]</p><p>Apply complete! Resources: 2 added, 0 changed, 0 destroyed.</p><p>Booyah!Conclusion
+&ldquo;Legacy&rdquo; services which don&rsquo;t fit nicely into the latest toolchain du&rsquo;jour are a
+common problem in larger infrastructures. Even in smaller, hipper, more agile
+shops you often have organic growth or PoCs-turned-production that you&rsquo;d like to
+whip into shape. Terraformer can help wrangle existing infrastructure, quickly
+importing resources from supported providers. While the provider list is not as
+extensive as Terraform&rsquo;s out of the box, common IaaS and DevOps tools are
+covered.</p><p>Since it&rsquo;s an open source project, you have complete visiblity into what you are
+running and can help the community by contributing code. Terraformer can easily
+import individual resources, or an entire service at once – perhaps you want to
+write automation to generate the import commands? Importing is low-stress, with
+plans that can be reviewed and idempotency which allows building up plans slowly
+without stomping on existing resources.</p></div></section></body></html>

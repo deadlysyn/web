@@ -248,7 +248,7 @@ typing. One way is using a Makefile:</p><div class=highlight><pre tabindex=0 sty
 Terratest in a large organization is how to safely orchestrate tests at scale&mldr;</p><p>Since tests are running Terraform and creating real resources, it&rsquo;s
 possible to have name collisions if teams are testing in the same account.
 <a href=https://github.com/cloudposse/terraform-null-label>Using a module to define a consistent naming convention</a>
-can help.</p><p>In larger teams, or anywhere there are &ldquo;hotspots&rdquo; where multiple engineers are
+can help.</p><p>In larger teams, or anywhere there are &ldquo;hotspots&rdquo; with multiple engineers
 working on similar areas of your infrastructure, when pipelines randomly fire you
 could end up munging state. <a href=https://github.com/cloudposse/terraform-aws-tfstate-backend>Use a module to bolt this on yourself</a>,
 or let a tool like <a href=https://terragrunt.gruntwork.io/docs/features/keep-your-remote-state-configuration-dry>terragrunt handle it for you</a>.</p><p>Often when testing you leave artifacts behind or get something in a
@@ -256,9 +256,9 @@ bad state. How will you deal with these resources? One way is dedicated test
 accounts. Disposable environments provide full isolation. While you may
 ultimately run your tests in production to validate deployments, by then you
 will have more confidence everything works as expected. Another option is tagging resources
-according to a schema that allows automated cleanup. Combining these too is better,
+according to a schema that allows automated cleanup. Combining these is even better,
 using something like <a href=https://github.com/rebuy-de/aws-nuke>aws-nuke</a> to auto-wipe
-all resources in ephemeral test accounts on an agreed schedule.</p><h2 id=conclusion>Conclusion</h2><p>If your project is more than a hobby, it&rsquo;s worth testing&mldr; While wasteful
+all resources in ephemeral accounts on a schedule.</p><h2 id=conclusion>Conclusion</h2><p>If your project is more than a hobby, it&rsquo;s worth testing&mldr; While wasteful
 tests are to be avoided, testing with intent is essential to ensure quality.
 Luckily, it&rsquo;s easy to get up and running with Terratest. You don&rsquo;t need to
 reinvent the wheel, you can leverage a veritable Swiss Army Knife to cover your
